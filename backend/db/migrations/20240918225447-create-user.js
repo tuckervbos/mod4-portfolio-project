@@ -21,10 +21,12 @@ module.exports = {
 				firstName: {
 					type: Sequelize.STRING(30),
 					allowNull: false,
+					defaultValue: "firstName",
 				},
 				lastName: {
 					type: Sequelize.STRING(30),
 					allowNull: false,
+					defaultValue: "lastName",
 				},
 				email: {
 					type: Sequelize.STRING(256),
