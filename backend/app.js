@@ -5,7 +5,10 @@ const cors = require("cors");
 const csurf = require("csurf");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
+
 const routes = require("./routes");
+
+const { ValidationError } = require("sequelize");
 
 const { environment } = require("./config");
 const isProduction = environment === "production";
@@ -51,8 +54,6 @@ app.use((_req, _res, next) => {
 	err.status = 404;
 	next(err);
 });
-
-const { ValidationError } = require("sequelize");
 
 // ...
 
