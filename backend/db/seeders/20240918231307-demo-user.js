@@ -15,24 +15,24 @@ module.exports = {
 			[
 				{
 					firstName: "Tucker",
-					lastName: "Notmylastname",
-					email: "demo@user.io",
-					username: "Demo-lition",
+					lastName: "Demo",
+					email: "tucker@demo.io",
+					username: "TuckerDemo1",
 					hashedPassword: bcrypt.hashSync("password"),
 				},
 				{
 					firstName: "DJ",
-					lastName: "NotDJslastname",
-					email: "user1@user.io",
-					username: "FakeUser1",
-					hashedPassword: bcrypt.hashSync("password2"),
+					lastName: "Demo",
+					email: "dj@demo.io",
+					username: "DJDemo2",
+					hashedPassword: bcrypt.hashSync("password"),
 				},
 				{
 					firstName: "Josh",
-					lastName: "NotJoshslastname",
-					email: "user2@user.io",
-					username: "FakeUser2",
-					hashedPassword: bcrypt.hashSync("password3"),
+					lastName: "Demolition",
+					email: "josh@demo.io",
+					username: "JoshDemo3",
+					hashedPassword: bcrypt.hashSync("password"),
 				},
 			],
 			{ validate: true }
@@ -42,12 +42,8 @@ module.exports = {
 	async down(queryInterface, Sequelize) {
 		options.tableName = "Users";
 		const Op = Sequelize.Op;
-		return queryInterface.bulkDelete(
-			options,
-			{
-				username: { [Op.in]: ["Demo-lition", "FakeUser1", "FakeUser2"] },
-			},
-			{}
-		);
+		return queryInterface.bulkDelete(options, {
+			username: { [Op.in]: ["TuckerDemo1", "DJDemo2", "JoshDemo3"] },
+		});
 	},
 };
