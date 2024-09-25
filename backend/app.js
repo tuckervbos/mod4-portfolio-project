@@ -70,8 +70,6 @@ app.use((err, _req, _res, next) => {
 	next(err);
 });
 
-// backend/app.js
-// ...
 // Error formatter
 app.use((err, _req, res, _next) => {
 	res.status(err.status || 500);

@@ -50,7 +50,7 @@ router.post("/", validateSignup, async (req, res) => {
 
 	await setTokenCookie(res, safeUser);
 
-	return res.json({
+	return res.status(201).json({
 		user: safeUser,
 	});
 });
