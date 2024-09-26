@@ -14,12 +14,12 @@ module.exports = {
 			[
 				{
 					spotId: 1,
-					url: "https://example.com/image1.jpg",
+					url: "https://picsum.photos/200/300",
 					preview: true,
 				},
 				{
 					spotId: 2,
-					url: "https://example.com/image2.jpg",
+					url: "https://picsum.photos/200/400",
 					preview: true,
 				},
 			],

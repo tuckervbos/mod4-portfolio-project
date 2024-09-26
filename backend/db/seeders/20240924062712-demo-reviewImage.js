@@ -14,11 +14,11 @@ module.exports = {
 			[
 				{
 					reviewId: 1,
-					url: "https://example.com/review1.jpg",
+					url: "https://picsum.photos/200/300",
 				},
 				{
 					reviewId: 2,
-					url: "https://example.com/review2.jpg",
+					url: "https://picsum.photos/200/300",
 				},
 			],
 			{ validate: true }

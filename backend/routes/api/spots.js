@@ -2,18 +2,74 @@ const express = require("express");
 const { Spot, SpotImage, User } = require("../../db/models");
 const { requireAuth } = require("../../utils/auth");
 const router = express.Router();
+const { Sequelize } = require("sequelize");
 
-// get all spots || GET /api/spots
-router.get("/", async (req, res) => {
-	const spots = await Spot.findAll();
-	res.json(spots);
+// router.get("/", (req, res) => {
+// 	console.log("GET /api/spots hit");
+// 	res.json({ message: "Spots endpoint works" });
+// });
+
+// get all spots || GET /api/spotsg
+router.get("/", async (req, res, next) => {
+	try {
+		const spots = await Spot.findAll({
+			attributes: {
+				include: [
+					[
+						Sequelize.literal(`(
+							SELECT AVG(reviews.stars)
+							FROM reviews
+							WHERE reviews.spotId = Spot.id
+							)`),
+						"avgRating",
+					],
+				],
+			},
+			include: [
+				{
+					model: SpotImage,
+					as: "SpotImages",
+					attributes: ["url"],
+					where: { preview: true },
+					required: false,
+				},
+			],
+		});
+		const formattedSpots = spots.map((spot) => {
+			return {
+				id: spot.id,
+				ownerId: spot.ownerId,
+				address: spot.address,
+				city: spot.city,
+				state: spot.state,
+				country: spot.country,
+				lat: spot.lat,
+				lng: spot.lng,
+				name: spot.name,
+				description: spot.description,
+				price: spot.price,
+				createdAt: spot.createdAt,
+				updatedAt: spot.updatedAt,
+				avgRating: spot.dataValues.avgRating || null, // Include avgRating
+				previewImage:
+					spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null, // Include previewImage
+			};
+		});
+
+		res.status(200).json({
+			Spots: formattedSpots,
+		});
+	} catch (err) {
+		// console.error(err.title);
+		next(err);
+	}
 });
 
 // get all spots owned by current user || GET /api/spots/current
 router.get("/current", requireAuth, async (req, res) => {
-	const spots = await Spot.findAll({
-		where: { ownerId: req.user.id },
-	});
+	const spots = await Spot.findAll();
+	// where: { ownerId: req.user.id },
+
 	res.json(spots);
 });
 
