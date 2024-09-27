@@ -1,11 +1,17 @@
 const express = require("express");
-const { Spot, SpotImage, User } = require("../../db/models");
+const {
+	Spot,
+	SpotImage,
+	User,
+	Review,
+	ReviewImage,
+} = require("../../db/models");
 const { requireAuth } = require("../../utils/auth");
 const router = express.Router();
 const { Sequelize } = require("sequelize");
-
-const { check } = require("express-validator");
+const { check, query, validationResult } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
+const { Op } = require("sequelize");
 
 // router.get("/", (req, res) => {
 // 	console.log("GET /api/spots hit");
@@ -40,13 +46,76 @@ const validateSpot = [
 	handleValidationErrors,
 ];
 
+const validateQueryParams = [
+	query("page")
+		.optional()
+		.isInt({ min: 1 })
+		.withMessage("Page must be greater than or equal to 1"),
+	query("size")
+		.optional()
+		.isInt({ min: 1, max: 20 })
+		.withMessage("Size must be between 1 and 20"),
+	query("minLat")
+		.optional()
+		.isFloat()
+		.withMessage("Minimum latitude is invalid"),
+	query("maxLat")
+		.optional()
+		.isFloat()
+		.withMessage("Maximum latitude is invalid"),
+	query("minLng")
+		.optional()
+		.isFloat()
+		.withMessage("Minimum longitude is invalid"),
+	query("maxLng")
+		.optional()
+		.isFloat()
+		.withMessage("Maximum longitude is invalid"),
+	query("minPrice")
+		.optional()
+		.isFloat({ min: 0 })
+		.withMessage("Minimum price must be greater than or equal to 0"),
+	query("maxPrice")
+		.optional()
+		.isFloat({ min: 0 })
+		.withMessage("Maximum price must be greater than or equal to 0"),
+	handleValidationErrors,
+];
+
 //> get all spots || GET /api/spots
 
-router.get("/", async (req, res, next) => {
-	const { spotId } = req.params;
+router.get("/", validateQueryParams, async (req, res, next) => {
+	let {
+		minLat,
+		maxLat,
+		minLng,
+		maxLng,
+		minPrice,
+		maxPrice,
+		page = 1,
+		size = 20,
+	} = req.query;
+
+	page = parseInt(page);
+	size = parseInt(size);
+	if (page < 1) page = 1;
+	if (size > 20) size = 20;
+
+	const where = {};
+
+	if (minLat) where.lat = { [Op.gte]: parseFloat(minLat) };
+	if (maxLat) where.lat = { ...where.lat, [Op.lte]: parseFloat(maxLat) };
+	if (minLng) where.lng = { [Op.gte]: parseFloat(minLng) };
+	if (maxLng) where.lng = { ...where.lng, [Op.lte]: parseFloat(maxLng) };
+	if (minPrice) where.price = { [Op.gte]: parseFloat(minPrice) };
+	if (maxPrice)
+		where.price = { ...where.price, [Op.lte]: parseFloat(maxPrice) };
 
 	try {
 		const spots = await Spot.findAll({
+			where,
+			limit: size,
+			offset: (page - 1) * size,
 			attributes: {
 				include: [
 					[
@@ -84,17 +153,18 @@ router.get("/", async (req, res, next) => {
 				price: spot.price,
 				createdAt: spot.createdAt,
 				updatedAt: spot.updatedAt,
-				avgRating: spot.dataValues.avgRating || null, // Include avgRating
+				avgRating: spot.dataValues.avgRating || null,
 				previewImage:
-					spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null, // Include previewImage
+					spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
 			};
 		});
 
 		res.status(200).json({
 			Spots: formattedSpots,
+			page,
+			size,
 		});
 	} catch (err) {
-		// console.error(err.title);
 		next(err);
 	}
 });
@@ -357,6 +427,58 @@ router.delete("/:spotId", requireAuth, async (req, res) => {
 		await spot.destroy();
 
 		res.json({ message: "Successfully deleted" });
+	} catch (err) {
+		next(err);
+	}
+});
+
+//> get all reviews by a spot's id || GET /api/spots/:spotId/reviews
+
+router.get("/:spotId/reviews", async (req, res, next) => {
+	const { spotId } = req.params;
+
+	try {
+		const spot = await Spot.findByPk(spotId);
+		if (!spot) {
+			return res.status(404).json({
+				message: "Spot couldn't be found",
+			});
+		}
+
+		const reviews = await Review.findAll({
+			where: { spotId },
+			include: [
+				{
+					model: User,
+					as: "User",
+					attributes: ["id", "firstName", "lastName"],
+				},
+				{
+					model: ReviewImage,
+					as: "ReviewImages",
+					attributes: ["id", "url"],
+				},
+			],
+		});
+		const formattedReviews = reviews.map((review) => ({
+			userId: review.User.id,
+			spotId: review.spotId,
+			review: review.review,
+			stars: review.stars,
+			createdAt: review.createdAt,
+			updatedAt: review.updatedAt,
+			User: {
+				id: review.User.id,
+				firstName: review.User.firstName,
+				lastName: review.User.lastName,
+			},
+			ReviewImages: review.ReviewImages.map((image) => ({
+				id: image.id,
+				url: image.url,
+			})),
+		}));
+
+		res.status(200).json({ Reviews: formattedReviews });
 	} catch (err) {
 		next(err);
 	}
