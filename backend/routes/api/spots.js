@@ -301,7 +301,7 @@ router.get("/:spotId", async (req, res, next) => {
 			createdAt: spot.createdAt,
 			updatedAt: spot.updatedAt,
 			numReviews: spot.dataValues.numReviews || 0,
-			avgRating: spot.dataValues.avgRating || null,
+			avgStarRating: spot.dataValues.avgRating || null,
 			SpotImages: spot.SpotImages,
 			Owner: {
 				id: spot.Owner.id,
@@ -461,6 +461,7 @@ router.get("/:spotId/reviews", async (req, res, next) => {
 			],
 		});
 		const formattedReviews = reviews.map((review) => ({
+			id: review.id,
 			userId: review.User.id,
 			spotId: review.spotId,
 			review: review.review,
