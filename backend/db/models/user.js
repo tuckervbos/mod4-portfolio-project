@@ -18,11 +18,11 @@ module.exports = (sequelize, DataTypes) => {
 				onDelete: "CASCADE",
 			});
 
-			// A user can make many bookings
-			User.hasMany(models.Booking, {
-				foreignKey: "userId",
-				onDelete: "CASCADE",
-			});
+			// // A user can make many bookings
+			// User.hasMany(models.Booking, {
+			// 	foreignKey: "userId",
+			// 	onDelete: "CASCADE",
+			// });
 		}
 	}
 	User.init(
