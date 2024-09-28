@@ -55,7 +55,7 @@ app.use((_req, _res, next) => {
 	next(err);
 });
 
-// ...
+const { ValidationError } = require("sequelize");
 
 // Process sequelize errors
 app.use((err, _req, _res, next) => {
@@ -71,14 +71,12 @@ app.use((err, _req, _res, next) => {
 	next(err);
 });
 
-// backend/app.js
-// ...
 // Error formatter
 app.use((err, _req, res, _next) => {
 	res.status(err.status || 500);
 	console.error(err);
 	res.json({
-		title: err.title || "Server Error",
+		title: isProduction ? null : err.title || "Server Error",
 		message: err.message,
 		errors: err.errors,
 		stack: isProduction ? null : err.stack,

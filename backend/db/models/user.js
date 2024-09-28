@@ -9,7 +9,20 @@ module.exports = (sequelize, DataTypes) => {
 		 * The `models/index` file will call this method automatically.
 		 */
 		static associate(models) {
-			// define association here
+			// A user can own many spots
+			User.hasMany(models.Spot, { foreignKey: "ownerId", onDelete: "CASCADE" });
+
+			// A user can write many reviews
+			User.hasMany(models.Review, {
+				foreignKey: "userId",
+				onDelete: "CASCADE",
+			});
+
+			// A user can make many bookings
+			User.hasMany(models.Booking, {
+				foreignKey: "userId",
+				onDelete: "CASCADE",
+			});
 		}
 	}
 	User.init(
@@ -19,11 +32,8 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false,
 
 				validate: {
-					len: [1, 30],
-					isNotEmail(value) {
-						if (Validator.isEmail(value)) {
-							throw new Error("Cannot be an email.");
-						}
+					notEmpty: {
+						msg: "First Name is required",
 					},
 				},
 			},
@@ -32,34 +42,34 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false,
 
 				validate: {
-					len: [1, 30],
-					isNotEmail(value) {
-						if (Validator.isEmail(value)) {
-							throw new Error("Cannot be an email.");
-						}
+					notEmpty: {
+						msg: "Last Name is required",
 					},
 				},
 			},
 			email: {
 				type: DataTypes.STRING,
 				allowNull: false,
-				unique: true,
+				unique: { msg: "User with that email already exists" },
 				validate: {
-					len: [3, 256],
-					isEmail: true,
+					notNull: {
+						msg: "Invalid Email",
+					},
 				},
 			},
 			username: {
 				type: DataTypes.STRING,
 				allowNull: false,
-				unique: true,
+				unique: { msg: "User with that username already exists" },
 				validate: {
-					len: [4, 30],
-					isNotEmail(value) {
-						if (Validator.isEmail(value)) {
-							throw new Error("Cannot be an email.");
-						}
+					notNull: {
+						msg: "Username is required",
 					},
+					// isNotEmail(value) {
+					// 	if (Validator.isEmail(value)) {
+					// 		throw new Error("Cannot be an email.");
+					// 	}
+					// },
 				},
 			},
 			hashedPassword: {
