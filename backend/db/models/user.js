@@ -16,13 +16,15 @@ module.exports = (sequelize, DataTypes) => {
 			User.hasMany(models.Review, {
 				foreignKey: "userId",
 				onDelete: "CASCADE",
+				hooks: true,
 			});
 
-			// // A user can make many bookings
-			// User.hasMany(models.Booking, {
-			// 	foreignKey: "userId",
-			// 	onDelete: "CASCADE",
-			// });
+			// A user can make many bookings
+			User.hasMany(models.Booking, {
+				foreignKey: "userId",
+				onDelete: "CASCADE",
+				hooks: true,
+			});
 		}
 	}
 	User.init(
