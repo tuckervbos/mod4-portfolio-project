@@ -106,13 +106,9 @@ router.post(
 		const { spotId } = req.params;
 		const { review, stars } = req.body;
 
-		console.log("Authenticated User:", req.user);
-		console.log("spotId:", spotId);
-
 		try {
 			const spot = await Spot.findByPk(spotId);
 			if (!spot) {
-				console.log(`Spot with ID ${spotId} not found.`);
 				return res.status(404).json({ message: "Spot couldn't be found" });
 			}
 

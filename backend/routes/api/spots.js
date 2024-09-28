@@ -13,11 +13,6 @@ const { check, query, validationResult } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
 const { Op } = require("sequelize");
 
-// router.get("/", (req, res) => {
-// 	console.log("GET /api/spots hit");
-// 	res.json({ message: "Spots endpoint works" });
-// });
-
 const validateSpot = [
 	check("name").exists({ checkFalsy: true }).withMessage("Name is required"),
 	check("address")
@@ -228,11 +223,8 @@ router.get("/current", requireAuth, async (req, res, next) => {
 //> get details of a spot from an id || GET /api/spots/:spotId
 
 router.get("/:spotId", async (req, res, next) => {
-	console.log("spotId:", req.params.spotId);
 	const { spotId } = req.params;
-
 	const id = parseInt(spotId, 10);
-	console.log("Parsed ID:", id);
 	if (isNaN(id)) {
 		return res.status(400).json({
 			title: "Validation error",
