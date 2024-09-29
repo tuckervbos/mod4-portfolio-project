@@ -1,14 +1,13 @@
 // backend/routes/api/session.js
 const express = require("express");
+const { Op } = require("sequelize");
+const bcrypt = require("bcryptjs");
 const router = express.Router();
 
 const { setTokenCookie, restoreUser } = require("../../utils/auth");
 const { User } = require("../../db/models");
 const { check } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
-
-const { Op } = require("sequelize");
-const bcrypt = require("bcryptjs");
 
 const validateLogin = [
 	check("credential")

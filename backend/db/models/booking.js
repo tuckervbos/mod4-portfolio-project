@@ -26,14 +26,14 @@ module.exports = (sequelize, DataTypes) => {
 				references: { model: "Users", key: "id" },
 			},
 			startDate: {
-				type: DataTypes.DATE,
+				type: DataTypes.DATEONLY,
 				allowNull: false,
 				validate: {
 					isDate: true,
 				},
 			},
 			endDate: {
-				type: DataTypes.DATE,
+				type: DataTypes.DATEONLY,
 				allowNull: false,
 				validate: {
 					isDate: true,

@@ -13,18 +13,13 @@ const validateSignup = [
 	check("firstName")
 		.exists({ checkFalsy: true })
 		.withMessage("First Name is required"),
-	// .isLength({ min: 1, max: 30 })
-	// .withMessage("First name must be between 1 and 30 characters"),
-
 	check("lastName")
 		.exists({ checkFalsy: true })
 		.withMessage("Last Name is required"),
-
 	check("email")
 		.exists({ checkFalsy: true })
 		.isEmail()
 		.withMessage("Invalid Email."),
-
 	check("username")
 		.exists({ checkFalsy: true })
 		.isLength({ min: 4 })

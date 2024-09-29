@@ -515,12 +515,11 @@ router.post("/", requireAuth, validateSpot, async (req, res, next) => {
 			city,
 			state,
 			country,
-			lat,
-			lng,
+			lat: parseFloat(lat),
+			lng: parseFloat(lng),
 			name,
 			description,
-			price,
-			ownerId: req.user.id,
+			price: parseFloat(price),
 		});
 		res.status(201).json(spot);
 	} catch (err) {
@@ -548,10 +547,10 @@ router.put("/:spotId", requireAuth, validateSpot, async (req, res, next) => {
 		spot.city = city;
 		spot.state = state;
 		spot.country = country;
-		spot.lat = lat;
-		spot.lng = lng;
+		spot.lat = parseFloat(lat);
+		spot.lng = parseFloat(lng);
 		spot.description = description;
-		spot.price = price;
+		spot.price = parseFloat(price);
 
 		await spot.save();
 
