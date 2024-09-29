@@ -67,54 +67,6 @@ router.get("/current", requireAuth, async (req, res) => {
 	return res.json({ Bookings: formattedBookings });
 });
 
-// Get all bookings for a spot by spotId
-router.get("/bookings", requireAuth, async (req, res) => {
-	const { spotId } = req.params;
-	const userId = req.user.id;
-
-	const spot = await Spot.findByPk(spotId);
-	if (!spot) {
-		return res.status(404).json({ message: "Spot couldn't be found" });
-	}
-
-	const bookings = await Booking.findAll({
-		where: { spotId },
-		include: [
-			{
-				model: User,
-				attributes: ["id", "firstName", "lastName"],
-			},
-		],
-	});
-
-	if (spot.ownerId !== userId) {
-		// If current user is not the owner, return limited booking data
-		const nonOwnerBookings = bookings.map((booking) => ({
-			spotId: booking.spotId,
-			startDate: booking.startDate,
-			endDate: booking.endDate,
-		}));
-		return res.json({ Bookings: nonOwnerBookings });
-	} else {
-		// If current user is the owner, return full booking data
-		const ownerBookings = bookings.map((booking) => ({
-			User: {
-				id: booking.User.id,
-				firstName: booking.User.firstName,
-				lastName: booking.User.lastName,
-			},
-			id: booking.id,
-			spotId: booking.spotId,
-			userId: booking.userId,
-			startDate: booking.startDate,
-			endDate: booking.endDate,
-			createdAt: booking.createdAt,
-			updatedAt: booking.updatedAt,
-		}));
-		return res.json({ Bookings: ownerBookings });
-	}
-});
-
 // Helper function to invalidate dates
 const invalidateDates = (startDate, endDate, res) => {
 	const errors = {};

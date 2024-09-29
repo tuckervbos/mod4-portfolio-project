@@ -96,50 +96,50 @@ router.get("/current", requireAuth, async (req, res, next) => {
 	}
 });
 
-//> create a review for a spot based on spot's id || POST /api/spots/:spotId/reviews
+// //> create a review for a spot based on spot's id || POST /api/spots/:spotId/reviews
 
-router.post(
-	"/:spotId/reviews",
-	requireAuth,
-	validateReview,
-	async (req, res, next) => {
-		const { spotId } = req.params;
-		const { review, stars } = req.body;
+// router.post(
+// 	"/:spotId/reviews",
+// 	requireAuth,
+// 	validateReview,
+// 	async (req, res, next) => {
+// 		const { spotId } = req.params;
+// 		const { review, stars } = req.body;
 
-		try {
-			const spot = await Spot.findByPk(spotId);
-			if (!spot) {
-				return res.status(404).json({ message: "Spot couldn't be found" });
-			}
+// 		try {
+// 			const spot = await Spot.findByPk(spotId);
+// 			if (!spot) {
+// 				return res.status(404).json({ message: "Spot couldn't be found" });
+// 			}
 
-			const existingReview = await Review.findOne({
-				where: { spotId, userId: req.user.id },
-			});
-			if (existingReview) {
-				return res
-					.status(500)
-					.json({ message: "User already has a review for this spot" });
-			}
-			const newReview = await Review.create({
-				spotId,
-				userId: req.user.id,
-				review,
-				stars,
-			});
-			res.status(201).json({
-				id: newReview.id,
-				userId: newReview.userId,
-				spotId: newReview.spotId,
-				review: newReview.review,
-				stars: newReview.stars,
-				createdAt: newReview.createdAt,
-				updatedAt: newReview.updatedAt,
-			});
-		} catch (err) {
-			next(err);
-		}
-	}
-);
+// 			const existingReview = await Review.findOne({
+// 				where: { spotId, userId: req.user.id },
+// 			});
+// 			if (existingReview) {
+// 				return res
+// 					.status(500)
+// 					.json({ message: "User already has a review for this spot" });
+// 			}
+// 			const newReview = await Review.create({
+// 				spotId,
+// 				userId: req.user.id,
+// 				review,
+// 				stars,
+// 			});
+// 			res.status(201).json({
+// 				id: newReview.id,
+// 				userId: newReview.userId,
+// 				spotId: newReview.spotId,
+// 				review: newReview.review,
+// 				stars: newReview.stars,
+// 				createdAt: newReview.createdAt,
+// 				updatedAt: newReview.updatedAt,
+// 			});
+// 		} catch (err) {
+// 			next(err);
+// 		}
+// 	}
+// );
 
 //> add an image to a review based on review's id || POST /api/reviews/:reviewId/images
 

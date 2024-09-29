@@ -133,88 +133,101 @@ router.get("/current", requireAuth, async (req, res, next) => {
 	}
 });
 
-//> get all spots || GET /api/spots
+// Get all bookings for a spot by spotId
+router.get("/spots/:spotId/bookings", requireAuth, async (req, res) => {
+	const { spotId } = req.params;
+	const userId = req.user.id;
 
-router.get("/", validateQueryParams, async (req, res, next) => {
-	let {
-		minLat,
-		maxLat,
-		minLng,
-		maxLng,
-		minPrice,
-		maxPrice,
-		page = 1,
-		size = 20,
-	} = req.query;
+	const spot = await Spot.findByPk(spotId);
+	if (!spot) {
+		return res.status(404).json({ message: "Spot couldn't be found" });
+	}
 
-	page = parseInt(page);
-	size = parseInt(size);
-	if (page < 1) page = 1;
-	if (size > 20) size = 20;
+	const bookings = await Booking.findAll({
+		where: { spotId },
+		include: [
+			{
+				model: User,
+				attributes: ["id", "firstName", "lastName"],
+			},
+		],
+	});
 
-	const where = {};
+	if (spot.ownerId !== userId) {
+		// If current user is not the owner, return limited booking data
+		const nonOwnerBookings = bookings.map((booking) => ({
+			spotId: booking.spotId,
+			startDate: booking.startDate,
+			endDate: booking.endDate,
+		}));
+		return res.json({ Bookings: nonOwnerBookings });
+	} else {
+		// If current user is the owner, return full booking data
+		const ownerBookings = bookings.map((booking) => ({
+			User: {
+				id: booking.User.id,
+				firstName: booking.User.firstName,
+				lastName: booking.User.lastName,
+			},
+			id: booking.id,
+			spotId: booking.spotId,
+			userId: booking.userId,
+			startDate: booking.startDate,
+			endDate: booking.endDate,
+			createdAt: booking.createdAt,
+			updatedAt: booking.updatedAt,
+		}));
+		return res.json({ Bookings: ownerBookings });
+	}
+});
+//> get all reviews by a spot's id || GET /api/spots/:spotId/reviews
 
-	if (minLat) where.lat = { [Op.gte]: parseFloat(minLat) };
-	if (maxLat) where.lat = { ...where.lat, [Op.lte]: parseFloat(maxLat) };
-	if (minLng) where.lng = { [Op.gte]: parseFloat(minLng) };
-	if (maxLng) where.lng = { ...where.lng, [Op.lte]: parseFloat(maxLng) };
-	if (minPrice) where.price = { [Op.gte]: parseFloat(minPrice) };
-	if (maxPrice)
-		where.price = { ...where.price, [Op.lte]: parseFloat(maxPrice) };
+router.get("/:spotId/reviews", async (req, res, next) => {
+	const { spotId } = req.params;
 
 	try {
-		const spots = await Spot.findAll({
-			where,
-			limit: size,
-			offset: (page - 1) * size,
-			attributes: {
-				include: [
-					[
-						Sequelize.literal(`(
-							SELECT AVG("Reviews".stars)
-							FROM "Reviews"
-							WHERE "Reviews"."spotId" = "Spot.id"
-							)`),
-						"avgRating",
-					],
-				],
-			},
+		const spot = await Spot.findByPk(spotId);
+		if (!spot) {
+			return res.status(404).json({
+				message: "Spot couldn't be found",
+			});
+		}
+
+		const reviews = await Review.findAll({
+			where: { spotId },
 			include: [
 				{
-					model: SpotImage,
-					as: "SpotImages",
-					attributes: ["url"],
-					where: { preview: true },
-					required: false,
+					model: User,
+					as: "User",
+					attributes: ["id", "firstName", "lastName"],
+				},
+				{
+					model: ReviewImage,
+					as: "ReviewImages",
+					attributes: ["id", "url"],
 				},
 			],
 		});
-		const formattedSpots = spots.map((spot) => {
-			return {
-				id: spot.id,
-				ownerId: spot.ownerId,
-				address: spot.address,
-				city: spot.city,
-				state: spot.state,
-				country: spot.country,
-				lat: spot.lat,
-				lng: spot.lng,
-				name: spot.name,
-				description: spot.description,
-				price: spot.price,
-				createdAt: spot.createdAt,
-				updatedAt: spot.updatedAt,
-				avgRating: spot.dataValues.avgRating || null,
-				previewImage:
-					spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
-			};
-		});
+		const formattedReviews = reviews.map((review) => ({
+			id: review.id,
+			userId: review.User.id,
+			spotId: review.spotId,
+			review: review.review,
+			stars: review.stars,
+			createdAt: review.createdAt,
+			updatedAt: review.updatedAt,
+			User: {
+				id: review.User.id,
+				firstName: review.User.firstName,
+				lastName: review.User.lastName,
+			},
+			ReviewImages: review.ReviewImages.map((image) => ({
+				id: image.id,
+				url: image.url,
+			})),
+		}));
 
-		res.status(200).json({
-			Spots: formattedSpots,
-			page,
-			size,
-		});
+		res.status(200).json({ Reviews: formattedReviews });
 	} catch (err) {
 		next(err);
 	}
@@ -247,16 +260,16 @@ router.get("/:spotId", async (req, res, next) => {
                             SELECT AVG("Reviews".stars)
                             FROM "Reviews"
                             WHERE "Reviews"."spotId" = "Spot.id"
-                        )`),
+							)`),
 						"avgRating",
 					],
 					// Count the number of reviews
 					[
 						Sequelize.literal(`(
-                            SELECT COUNT("Reviews".id)
-                            FROM "Reviews"
-                            WHERE "Reviews"."spotId" = "Spot.id"
-                        )`),
+								SELECT COUNT("Reviews".id)
+								FROM "Reviews"
+								WHERE "Reviews"."spotId" = "Spot.id"
+								)`),
 						"numReviews",
 					],
 				],
@@ -308,31 +321,137 @@ router.get("/:spotId", async (req, res, next) => {
 	}
 });
 
-//> create a spot || POST /api/spots
+//> get all spots || GET /api/spots
 
-router.post("/", requireAuth, validateSpot, async (req, res, next) => {
-	const { address, city, state, country, lat, lng, name, description, price } =
-		req.body;
+router.get("/", validateQueryParams, async (req, res, next) => {
+	let {
+		minLat,
+		maxLat,
+		minLng,
+		maxLng,
+		minPrice,
+		maxPrice,
+		page = 1,
+		size = 20,
+	} = req.query;
+
+	page = parseInt(page);
+	size = parseInt(size);
+	if (page < 1) page = 1;
+	if (size > 20) size = 20;
+
+	const where = {};
+
+	if (minLat) where.lat = { [Op.gte]: parseFloat(minLat) };
+	if (maxLat) where.lat = { ...where.lat, [Op.lte]: parseFloat(maxLat) };
+	if (minLng) where.lng = { [Op.gte]: parseFloat(minLng) };
+	if (maxLng) where.lng = { ...where.lng, [Op.lte]: parseFloat(maxLng) };
+	if (minPrice) where.price = { [Op.gte]: parseFloat(minPrice) };
+	if (maxPrice)
+		where.price = { ...where.price, [Op.lte]: parseFloat(maxPrice) };
 
 	try {
-		const spot = await Spot.create({
-			ownerId: req.user.id,
-			address,
-			city,
-			state,
-			country,
-			lat,
-			lng,
-			name,
-			description,
-			price,
-			ownerId: req.user.id,
+		const spots = await Spot.findAll({
+			where,
+			limit: size,
+			offset: (page - 1) * size,
+			attributes: {
+				include: [
+					[
+						Sequelize.literal(`(
+									SELECT AVG("Reviews".stars)
+									FROM "Reviews"
+									WHERE "Reviews"."spotId" = "Spot.id"
+									)`),
+						"avgRating",
+					],
+				],
+			},
+			include: [
+				{
+					model: SpotImage,
+					as: "SpotImages",
+					attributes: ["url"],
+					where: { preview: true },
+					required: false,
+				},
+			],
 		});
-		res.status(201).json(spot);
+		const formattedSpots = spots.map((spot) => {
+			return {
+				id: spot.id,
+				ownerId: spot.ownerId,
+				address: spot.address,
+				city: spot.city,
+				state: spot.state,
+				country: spot.country,
+				lat: spot.lat,
+				lng: spot.lng,
+				name: spot.name,
+				description: spot.description,
+				price: spot.price,
+				createdAt: spot.createdAt,
+				updatedAt: spot.updatedAt,
+				avgRating: spot.dataValues.avgRating || null,
+				previewImage:
+					spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
+			};
+		});
+
+		res.status(200).json({
+			Spots: formattedSpots,
+			page,
+			size,
+		});
 	} catch (err) {
 		next(err);
 	}
 });
+
+//> create a review for a spot based on spot's id || POST /api/spots/:spotId/reviews
+
+router.post(
+	"/:spotId/reviews",
+	requireAuth,
+	validateReview,
+	async (req, res, next) => {
+		const { spotId } = req.params;
+		const { review, stars } = req.body;
+
+		try {
+			const spot = await Spot.findByPk(spotId);
+			if (!spot) {
+				return res.status(404).json({ message: "Spot couldn't be found" });
+			}
+
+			const existingReview = await Review.findOne({
+				where: { spotId, userId: req.user.id },
+			});
+			if (existingReview) {
+				return res
+					.status(500)
+					.json({ message: "User already has a review for this spot" });
+			}
+			const newReview = await Review.create({
+				spotId,
+				userId: req.user.id,
+				review,
+				stars,
+			});
+			res.status(201).json({
+				id: newReview.id,
+				userId: newReview.userId,
+				spotId: newReview.spotId,
+				review: newReview.review,
+				stars: newReview.stars,
+				createdAt: newReview.createdAt,
+				updatedAt: newReview.updatedAt,
+			});
+		} catch (err) {
+			next(err);
+		}
+	}
+);
 
 //> add an image to a spot based on spot's id || POST /api/spots/:spotId/images
 
@@ -366,6 +485,32 @@ router.post("/:spotId/images", requireAuth, async (req, res, next) => {
 			url: newImage.url,
 			preview: newImage.preview,
 		});
+	} catch (err) {
+		next(err);
+	}
+});
+
+//> create a spot || POST /api/spots
+
+router.post("/", requireAuth, validateSpot, async (req, res, next) => {
+	const { address, city, state, country, lat, lng, name, description, price } =
+		req.body;
+
+	try {
+		const spot = await Spot.create({
+			ownerId: req.user.id,
+			address,
+			city,
+			state,
+			country,
+			lat,
+			lng,
+			name,
+			description,
+			price,
+			ownerId: req.user.id,
+		});
+		res.status(201).json(spot);
 	} catch (err) {
 		next(err);
 	}
@@ -419,59 +564,6 @@ router.delete("/:spotId", requireAuth, async (req, res) => {
 		await spot.destroy();
 
 		res.json({ message: "Successfully deleted" });
-	} catch (err) {
-		next(err);
-	}
-});
-
-//> get all reviews by a spot's id || GET /api/spots/:spotId/reviews
-
-router.get("/:spotId/reviews", async (req, res, next) => {
-	const { spotId } = req.params;
-
-	try {
-		const spot = await Spot.findByPk(spotId);
-		if (!spot) {
-			return res.status(404).json({
-				message: "Spot couldn't be found",
-			});
-		}
-
-		const reviews = await Review.findAll({
-			where: { spotId },
-			include: [
-				{
-					model: User,
-					as: "User",
-					attributes: ["id", "firstName", "lastName"],
-				},
-				{
-					model: ReviewImage,
-					as: "ReviewImages",
-					attributes: ["id", "url"],
-				},
-			],
-		});
-		const formattedReviews = reviews.map((review) => ({
-			id: review.id,
-			userId: review.User.id,
-			spotId: review.spotId,
-			review: review.review,
-			stars: review.stars,
-			createdAt: review.createdAt,
-			updatedAt: review.updatedAt,
-			User: {
-				id: review.User.id,
-				firstName: review.User.firstName,
-				lastName: review.User.lastName,
-			},
-			ReviewImages: review.ReviewImages.map((image) => ({
-				id: image.id,
-				url: image.url,
-			})),
-		}));
-
-		res.status(200).json({ Reviews: formattedReviews });
 	} catch (err) {
 		next(err);
 	}

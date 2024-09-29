@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const apiRouter = require("./api");
+router.use("/api", apiRouter);
 
 // Keep this route to test frontend setup in Mod 5
 router.post("/test", function (req, res) {
@@ -16,7 +17,5 @@ router.get("/api/csrf/restore", (req, res) => {
 		"XSRF-Token": csrfToken,
 	});
 });
-
-router.use("/api", apiRouter);
 
 module.exports = router;
