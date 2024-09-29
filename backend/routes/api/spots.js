@@ -77,6 +77,62 @@ const validateQueryParams = [
 	handleValidationErrors,
 ];
 
+//> get all spots owned by current user || GET /api/spots/current
+
+router.get("/current", requireAuth, async (req, res, next) => {
+	try {
+		const userId = req.user.id; // Authenticated user's ID
+
+		const spots = await Spot.findAll({
+			where: { ownerId: userId },
+			attributes: {
+				include: [
+					// Calculate the average rating for each spot
+					[
+						Sequelize.literal(`(
+							SELECT AVG("Reviews".stars)
+							FROM "Reviews"
+							WHERE "Reviews"."spotId" = "Spot.id"
+						)`),
+						"avgRating",
+					],
+				],
+			},
+			include: [
+				{
+					model: SpotImage,
+					as: "SpotImages",
+					attributes: ["url"],
+					where: { preview: true }, // Only include preview images
+					required: false,
+				},
+			],
+		});
+
+		const formattedSpots = spots.map((spot) => ({
+			id: spot.id,
+			ownerId: spot.ownerId,
+			address: spot.address,
+			city: spot.city,
+			state: spot.state,
+			country: spot.country,
+			lat: spot.lat,
+			lng: spot.lng,
+			name: spot.name,
+			description: spot.description,
+			price: spot.price,
+			createdAt: spot.createdAt,
+			updatedAt: spot.updatedAt,
+			avgRating: spot.dataValues.avgRating || null,
+			previewImage: spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
+		}));
+
+		res.status(200).json({ Spots: formattedSpots });
+	} catch (err) {
+		next(err);
+	}
+});
+
 //> get all spots || GET /api/spots
 
 router.get("/", validateQueryParams, async (req, res, next) => {
@@ -164,62 +220,6 @@ router.get("/", validateQueryParams, async (req, res, next) => {
 	}
 });
 
-//> get all spots owned by current user || GET /api/spots/current
-
-router.get("/current", requireAuth, async (req, res, next) => {
-	try {
-		const userId = req.user.id; // Authenticated user's ID
-
-		const spots = await Spot.findAll({
-			where: { ownerId: userId },
-			attributes: {
-				include: [
-					// Calculate the average rating for each spot
-					[
-						Sequelize.literal(`(
-                            SELECT AVG(reviews.stars)
-                            FROM reviews
-                            WHERE reviews.spotId = Spot.id
-                        )`),
-						"avgRating",
-					],
-				],
-			},
-			include: [
-				{
-					model: SpotImage,
-					as: "SpotImages",
-					attributes: ["url"],
-					where: { preview: true }, // Only include preview images
-					required: false,
-				},
-			],
-		});
-
-		const formattedSpots = spots.map((spot) => ({
-			id: spot.id,
-			ownerId: spot.ownerId,
-			address: spot.address,
-			city: spot.city,
-			state: spot.state,
-			country: spot.country,
-			lat: spot.lat,
-			lng: spot.lng,
-			name: spot.name,
-			description: spot.description,
-			price: spot.price,
-			createdAt: spot.createdAt,
-			updatedAt: spot.updatedAt,
-			avgRating: spot.dataValues.avgRating || null,
-			previewImage: spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
-		}));
-
-		res.status(200).json({ Spots: formattedSpots });
-	} catch (err) {
-		next(err);
-	}
-});
-
 //> get details of a spot from an id || GET /api/spots/:spotId
 
 router.get("/:spotId", async (req, res, next) => {
@@ -244,18 +244,18 @@ router.get("/:spotId", async (req, res, next) => {
 					// Calculate the average rating
 					[
 						Sequelize.literal(`(
-                            SELECT AVG(reviews.stars)
-                            FROM reviews
-                            WHERE reviews.spotId = Spot.id
+                            SELECT AVG("Reviews".stars)
+                            FROM "Reviews"
+                            WHERE "Reviews"."spotId" = "Spot.id"
                         )`),
 						"avgRating",
 					],
 					// Count the number of reviews
 					[
 						Sequelize.literal(`(
-                            SELECT COUNT(reviews.id)
-                            FROM reviews
-                            WHERE reviews.spotId = Spot.id
+                            SELECT COUNT("Reviews".id)
+                            FROM "Reviews"
+                            WHERE "Reviews"."spotId" = "Spot.id"
                         )`),
 						"numReviews",
 					],
@@ -404,7 +404,7 @@ router.put("/:spotId", requireAuth, validateSpot, async (req, res, next) => {
 	}
 });
 
-// delete a spot || DELETE /api/spots/:spotId
+//> delete a spot || DELETE /api/spots/:spotId
 router.delete("/:spotId", requireAuth, async (req, res) => {
 	const { spotId } = req.params;
 	try {
