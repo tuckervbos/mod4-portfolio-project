@@ -8,7 +8,7 @@ const spotsRouter = require("./spots");
 const reviewsRouter = require("./reviews");
 const spotImagesRouter = require("./spot-images");
 const reviewImagesRouter = require("./review-images");
-const bookingsRouter = require("./routes/api/bookings");
+const bookingsRouter = require("./bookings");
 const { restoreUser } = require("../../utils/auth.js");
 
 // Connect restoreUser middleware to the API router
