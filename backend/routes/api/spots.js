@@ -100,9 +100,9 @@ router.get("/current", requireAuth, async (req, res, next) => {
 				include: [
 					[
 						Sequelize.literal(`(
-							SELECT AVG("Reviews"."stars")
-							FROM "Reviews"
-							WHERE "Reviews"."spotId" = "Spot"."id"
+							SELECT AVG("db_air_bnb_schema"."Reviews"."stars")
+							FROM "db_air_bnb_schema"."Reviews"
+							WHERE "db_air_bnb_schema"."Reviews"."spotId" = "Spot"."id"
 						)`),
 						"avgRating",
 					],
