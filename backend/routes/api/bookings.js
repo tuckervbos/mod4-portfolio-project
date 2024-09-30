@@ -125,56 +125,6 @@ const conflictExists = (startDateConflict, endDateConflict) => {
 	return false;
 };
 
-// Create a booking for a spot by spotId
-router.post("/", requireAuth, async (req, res) => {
-	const { spotId } = req.params;
-	const { startDate, endDate } = req.body;
-	const userId = req.user.id;
-
-	if (invalidateDates(startDate, endDate, res)) return;
-
-	const spot = await Spot.findByPk(spotId);
-	if (!spot) {
-		return res.status(404).json({ message: "Spot couldn't be found" });
-	}
-
-	// Ensure the user is not booking their own spot
-	if (spot.ownerId === userId) {
-		return res.status(403).json({ message: "Forbidden" });
-	}
-
-	// Check if there are date conflicts with any existing booking
-	const startDateConflict = await Booking.findOne({
-		where: {
-			spotId,
-			[Op.and]: [
-				{ startDate: { [Op.lte]: startDate } },
-				{ endDate: { [Op.gte]: startDate } },
-			],
-		},
-	});
-	const endDateConflict = await Booking.findOne({
-		where: {
-			spotId,
-			[Op.and]: [
-				{ startDate: { [Op.lte]: endDate } },
-				{ endDate: { [Op.gte]: endDate } },
-			],
-		},
-	});
-
-	if (conflictExists(startDateConflict, endDateConflict)) return;
-
-	const newBooking = await Booking.create({
-		spotId,
-		userId,
-		startDate,
-		endDate,
-	});
-
-	return res.status(201).json(newBooking);
-});
-
 // Edit a booking
 router.put("/:bookingId", requireAuth, async (req, res) => {
 	const { bookingId } = req.params;
