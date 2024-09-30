@@ -126,7 +126,7 @@ const conflictExists = (startDateConflict, endDateConflict) => {
 };
 
 // Create a booking for a spot by spotId
-router.post("/bookings", requireAuth, async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
 	const { spotId } = req.params;
 	const { startDate, endDate } = req.body;
 	const userId = req.user.id;
