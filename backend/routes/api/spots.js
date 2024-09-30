@@ -100,9 +100,9 @@ router.get("/current", requireAuth, async (req, res, next) => {
 				include: [
 					[
 						Sequelize.literal(`(
-							SELECT AVG("reviews".stars)
-							FROM "reviews"
-							WHERE "reviews"."spotId" = "Spot"."id"
+							SELECT AVG("Reviews"."stars")
+							FROM "Reviews"
+							WHERE "Reviews"."spotId" = "Spot"."id"
 						)`),
 						"avgRating",
 					],
@@ -146,7 +146,8 @@ router.get("/current", requireAuth, async (req, res, next) => {
 	}
 });
 
-// Get all bookings for a spot by spotId
+//> Get all bookings for a spot by spotId
+
 router.get("/spots/:spotId/bookings", requireAuth, async (req, res) => {
 	const { spotId } = req.params;
 	const userId = req.user.id;
