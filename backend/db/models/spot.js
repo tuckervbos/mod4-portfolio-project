@@ -84,6 +84,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			sequelize,
 			modelName: "Spot",
+			...options,
 		}
 	);
 	return Spot;
