@@ -12,6 +12,7 @@ const { Sequelize } = require("sequelize");
 const { check, query, validationResult } = require("express-validator");
 const { handleValidationErrors } = require("../../utils/validation");
 const { Op } = require("sequelize");
+const { invalidateDates, conflictExists } = require("./bookings");
 
 const validateSpot = [
 	check("name").exists({ checkFalsy: true }).withMessage("Name is required"),
