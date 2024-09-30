@@ -92,18 +92,17 @@ const validateReview = [
 
 router.get("/current", requireAuth, async (req, res, next) => {
 	try {
-		const userId = req.user.id; // Authenticated user's ID
+		const userId = req.user.id;
 
 		const spots = await Spot.findAll({
 			where: { ownerId: userId },
 			attributes: {
 				include: [
-					// Calculate the average rating for each spot
 					[
 						Sequelize.literal(`(
-							SELECT AVG("Reviews".stars)
-							FROM "Reviews"
-							WHERE "Reviews"."spotId" = "Spot"."id"
+							SELECT AVG("reviews".stars)
+							FROM "reviews"
+							WHERE "reviews"."spotId" = "Spot"."id"
 						)`),
 						"avgRating",
 					],
@@ -134,7 +133,10 @@ router.get("/current", requireAuth, async (req, res, next) => {
 			price: spot.price,
 			createdAt: spot.createdAt,
 			updatedAt: spot.updatedAt,
-			avgRating: spot.dataValues.avgRating || null,
+			avgRating: spot.dataValues.avgRating
+				? parseFloat(spot.dataValues.avgRating)
+				: null,
+
 			previewImage: spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
 		}));
 
@@ -269,18 +271,18 @@ router.get("/:spotId", async (req, res, next) => {
 					// Calculate the average rating
 					[
 						Sequelize.literal(`(
-                            SELECT AVG("db_air_bnb_schema"."Reviews".stars)
-                            FROM "db_air_bnb_schema"."Reviews"
-                            WHERE "db_air_bnb_schema"."Reviews"."spotId" = "Spot"."id"
+                            SELECT AVG("db_air_bnb_schema"."reviews".stars)
+                            FROM "db_air_bnb_schema"."reviews"
+                            WHERE "db_air_bnb_schema"."reviews"."spotId" = "Spot"."id"
 							)`),
 						"avgRating",
 					],
 					// Count the number of reviews
 					[
 						Sequelize.literal(`(
-								SELECT COUNT("db_air_bnb_schema"."Reviews".id)
-								FROM "db_air_bnb_schema"."Reviews"
-								WHERE "db_air_bnb_schema"."Reviews"."spotId" = "Spot"."id"
+								SELECT COUNT("db_air_bnb_schema"."reviews".id)
+								FROM "db_air_bnb_schema"."reviews"
+								WHERE "db_air_bnb_schema"."reviews"."spotId" = "Spot"."id"
 								)`),
 						"numReviews",
 					],
@@ -371,9 +373,9 @@ router.get("/", validateQueryParams, async (req, res, next) => {
 				include: [
 					[
 						Sequelize.literal(`(
-									SELECT AVG("db_air_bnb_schema"."Reviews".stars)
-									FROM "db_air_bnb_schema"."Reviews"
-									WHERE "db_air_bnb_schema"."Reviews"."spotId" = "Spot"."id"
+									SELECT AVG("db_air_bnb_schema"."reviews".stars)
+									FROM "db_air_bnb_schema"."reviews"
+									WHERE "db_air_bnb_schema"."reviews"."spotId" = "Spot"."id"
 									)`),
 						"avgRating",
 					],
