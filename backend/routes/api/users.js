@@ -32,64 +32,97 @@ const validateSignup = [
 	handleValidationErrors,
 ];
 
-// Sign up
+// // Sign up
+// router.post("/", validateSignup, async (req, res, next) => {
+// 	try {
+// 		const { firstName, lastName, email, password, username } = req.body;
+// 		const hashedPassword = bcrypt.hashSync(password);
+
+// 		const existingUser = await User.findOne({
+// 			where: {
+// 				email: email,
+// 				username: username,
+// 			},
+// 		});
+// 		if (existingUser) {
+// 			return res.status(500).json({
+// 				message: "User already exists",
+// 				errors: {
+// 					email: "User with that email already exists",
+// 					username: "User with that username already exists",
+// 				},
+// 			});
+// 		}
+
+// 		const user = await User.create({
+// 			firstName,
+// 			lastName,
+// 			email,
+// 			username,
+// 			hashedPassword,
+// 		});
+
+// 		const safeUser = {
+// 			id: user.id,
+// 			firstName: user.firstName,
+// 			lastName: user.lastName,
+// 			email: user.email,
+// 			username: user.username,
+// 		};
+
+// 		await setTokenCookie(res, safeUser);
+
+// 		return res.status(201).json({
+// 			user: safeUser,
+// 		});
+// 	} catch (err) {
+// 		next(err);
+// 	}
+// });
+
+// Sign up route
 router.post("/", validateSignup, async (req, res, next) => {
-	try {
-		const { firstName, lastName, email, password, username } = req.body;
-		const hashedPassword = bcrypt.hashSync(password);
+	const { email, password, username, firstName, lastName } = req.body;
 
-		const existingUser = await User.findOne({
-			where: {
-				email: email,
-				username: username,
-			},
+	// Check if a user already exists with the same email or username
+	const existingUserByEmail = await User.findOne({ where: { email } });
+	const existingUserByUsername = await User.findOne({ where: { username } });
+
+	if (existingUserByEmail || existingUserByUsername) {
+		const errors = {};
+		if (existingUserByEmail)
+			errors.email = "User with that email already exists";
+		if (existingUserByUsername)
+			errors.username = "User with that username already exists";
+
+		return res.status(500).json({
+			message: "User already exists",
+			errors,
 		});
-		if (existingUser) {
-			return res.status(500).json({
-				message: "User already exists",
-				errors: {
-					email: "User with that email already exists",
-					username: "User with that username already exists",
-				},
-			});
-		}
-
-		const user = await User.create({
-			firstName,
-			lastName,
-			email,
-			username,
-			hashedPassword,
-		});
-
-		const safeUser = {
-			id: user.id,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			email: user.email,
-			username: user.username,
-		};
-
-		await setTokenCookie(res, safeUser);
-
-		return res.status(201).json({
-			user: safeUser,
-		});
-	} catch (err) {
-		if (err.name === "SequelizeUniqueConstraintError") {
-			const errors = {};
-			err.errors.forEach((error) => {
-				errors[error.path] = error.message; // Dynamically get field name and message
-			});
-
-			return res.status(500).json({
-				message: "User already exists",
-				errors: errors,
-			});
-		}
-
-		next(err);
 	}
+
+	// Create the new user if no conflicts exist
+	const hashedPassword = bcrypt.hashSync(password);
+	const user = await User.create({
+		email,
+		username,
+		hashedPassword,
+		firstName,
+		lastName,
+	});
+
+	const safeUser = {
+		id: user.id,
+		firstName: user.firstName,
+		lastName: user.lastName,
+		email: user.email,
+		username: user.username,
+	};
+
+	// Set authentication cookie
+	await setTokenCookie(res, safeUser);
+
+	return res.status(201).json({ user: safeUser });
 });
 
 module.exports = router;
