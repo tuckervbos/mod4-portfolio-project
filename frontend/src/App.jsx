@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import LoginFormPage from "./components/LoginFormPage/LoginFormPage";
 import SignupFormPage from "./components/SignupFormPage/SignupFormPage";
+import Navigation from "./components/Navigation/Navigation";
 import * as sessionActions from "./store/session";
 
 function Layout() {
@@ -13,8 +14,13 @@ function Layout() {
 		// restore session user:
 		dispatch(sessionActions.restoreUser()).then(() => setIsLoaded(true));
 	}, [dispatch]);
-	if (!isLoaded) return <p>Loading...</p>; // loading placeholder
-	return <Outlet />;
+
+	return (
+		<>
+			<Navigation isLoaded={isLoaded} />
+			{isLoaded && <Outlet />}
+		</>
+	);
 }
 
 const router = createBrowserRouter([
