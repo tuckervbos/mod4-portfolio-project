@@ -9,21 +9,23 @@ function ProfileButton({ user }) {
 	const ulRef = useRef(); // created a reference, attached to <ul> elem
 
 	const toggleMenu = (e) => {
-		e.stopPropagation();
+		e.stopPropagation(); // prevent event from reaching document:
 		// if (!showMenu) setShowMenu(true);
-		setShowMenu(!showMenu);
+		setShowMenu(!showMenu); // toggle dropdown visibility
 	};
 
 	useEffect(() => {
+		// skip adding event listener if menu is hidden:
 		if (!showMenu) return;
 
 		const closeMenu = (e) => {
+			// check if click is outside dropdown:
 			if (ulRef.current && !ulRef.current.contains(e.target)) {
 				setShowMenu(false);
 			}
 		};
-		document.addEventListener("click", closeMenu);
-		return () => document.removeEventListener("click", closeMenu);
+		document.addEventListener("click", closeMenu); // add event listener
+		return () => document.removeEventListener("click", closeMenu); // cleanup
 	}, [showMenu]);
 
 	const logout = (e) => {
