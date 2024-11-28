@@ -2,7 +2,6 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 // import LoginFormPage from "./components/LoginFormPage/LoginFormPage";
-import SignupFormPage from "./components/SignupFormPage/SignupFormPage";
 import Navigation from "./components/Navigation/Navigation";
 import * as sessionActions from "./store/session";
 
@@ -11,8 +10,9 @@ function Layout() {
 	const [isLoaded, setIsLoaded] = useState(false);
 
 	useEffect(() => {
-		// restore session user:
-		dispatch(sessionActions.restoreUser()).then(() => setIsLoaded(true));
+		dispatch(sessionActions.restoreUser()).then(() => {
+			setIsLoaded(true);
+		});
 	}, [dispatch]);
 
 	return (
@@ -26,11 +26,7 @@ function Layout() {
 const router = createBrowserRouter([
 	{
 		element: <Layout />,
-		children: [
-			{ path: "/", element: <h1>Welcome!</h1> },
-			// { path: "/login", element: <LoginFormPage /> },
-			{ path: "/signup", element: <SignupFormPage /> },
-		],
+		children: [{ path: "/", element: <h1>Welcome!</h1> }],
 	},
 ]);
 
