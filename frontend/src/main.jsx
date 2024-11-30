@@ -10,7 +10,7 @@ import { Modal, ModalProvider } from "./context/Modal";
 
 const store = configureStore();
 
-console.log("Environment Mode:", import.meta.env.MODE);
+// console.log("Environment Mode:", import.meta.env.MODE);
 
 if (import.meta.env.MODE !== "production") {
 	restoreCSRF();

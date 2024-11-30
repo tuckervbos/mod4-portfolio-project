@@ -6,7 +6,7 @@ function OpenModalMenuItem({
 	onItemClick,
 	onModalClose,
 }) {
-	const { setModalContent, setModalOnClose } = useModal();
+	const { setModalContent, setOnModalClose } = useModal();
 
 	const onClick = () => {
 		if (onModalClose) setOnModalClose(onModalClose);
