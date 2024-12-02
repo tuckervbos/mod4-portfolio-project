@@ -1,9 +1,11 @@
 import { csrfFetch } from "./csrf";
+// import { createSelector } from "reselect";
 
 //> action types:
 const LOAD_REVIEWS = "reviews/LOAD_REVIEWS";
 const ADD_REVIEW = "reviews/ADD_REVIEW";
 const REMOVE_REVIEW = "reviews/REMOVE_REVIEW";
+const UPDATE_REVIEW = "reviews/UPDATE_REVIEW";
 
 //> action creators
 const loadReviews = (reviews) => ({
@@ -11,8 +13,13 @@ const loadReviews = (reviews) => ({
 	reviews,
 });
 
-const addReview = (review) => ({
+const addReviewAction = (review) => ({
 	type: ADD_REVIEW,
+	review,
+});
+
+const updateReviewAction = (review) => ({
+	type: UPDATE_REVIEW,
 	review,
 });
 
@@ -20,6 +27,12 @@ const removeReview = (reviewId) => ({
 	type: REMOVE_REVIEW,
 	reviewId,
 });
+
+// //= selector:
+// export const selectSpotReviews = createSelector(
+// 	(state) => state.reviews.spotReviews,
+// 	(spotReviews) => Object.values(spotReviews)
+// );
 
 //- thunks
 export const fetchSpotReviews = (spotId) => async (dispatch) => {
@@ -30,7 +43,7 @@ export const fetchSpotReviews = (spotId) => async (dispatch) => {
 	}
 };
 
-export const createReview = (spotId, review) => async (dispatch) => {
+export const addReview = (spotId, review) => async (dispatch) => {
 	const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -38,7 +51,19 @@ export const createReview = (spotId, review) => async (dispatch) => {
 	});
 	if (res.ok) {
 		const newReview = await res.json();
-		dispatch(addReview(newReview));
+		dispatch(addReviewAction(newReview));
+	}
+};
+
+export const updateReview = (reviewId, reviewData) => async (dispatch) => {
+	const res = await csrfFetch(`/api/reviews/${reviewId}`, {
+		method: "PUT",
+		body: JSON.stringify(reviewData),
+	});
+
+	if (res.ok) {
+		const updatedReview = await res.json();
+		dispatch(updateReviewAction(updatedReview));
 	}
 };
 
@@ -69,6 +94,14 @@ export default function reviewsReducer(state = initialState, action) {
 			delete newState.spotReviews[action.reviewId];
 			return newState;
 		}
+		case UPDATE_REVIEW:
+			return {
+				...state,
+				spotReviews: {
+					...state.spotReviews,
+					[action.review.id]: action.review,
+				},
+			};
 		default:
 			return state;
 	}

@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
 	fetchSpotReviews,
-	createReview,
+	addReview,
 	deleteReview,
+	updateReview,
 } from "../../store/reviews";
 
 const SpotReviews = () => {
@@ -16,6 +17,8 @@ const SpotReviews = () => {
 	const sessionUser = useSelector((state) => state.session.user);
 	const [reviewText, setReviewText] = useState("");
 	const [stars, setStars] = useState(0);
+	const [isEditing, setIsEditing] = useState(false);
+	const [editingReviewId, setEditingReviewId] = useState(null);
 
 	useEffect(() => {
 		dispatch(fetchSpotReviews(spotId));
@@ -27,9 +30,24 @@ const SpotReviews = () => {
 			alert("Please provide at least 10 characters and a rating.");
 			return;
 		}
-		await dispatch(createReview(spotId, { review: reviewText, stars }));
+		if (isEditing) {
+			await dispatch(
+				updateReview(editingReviewId, { review: reviewText, stars })
+			);
+			setIsEditing(false);
+			setEditingReviewId(null);
+		} else {
+			await dispatch(addReview(spotId, { review: reviewText, stars }));
+		}
 		setReviewText("");
 		setStars(0);
+	};
+
+	const handleUpdate = (review) => {
+		setReviewText(review.review);
+		setStars(review.stars);
+		setIsEditing(true);
+		setEditingReviewId(review.id);
 	};
 
 	const handleDelete = (reviewId) => {
@@ -49,7 +67,10 @@ const SpotReviews = () => {
 						</p>
 						<p>Rating: {review.stars} ⭐</p>
 						{sessionUser?.id === review.userId && (
-							<button onClick={() => handleDelete(review.id)}>Delete</button>
+							<>
+								<button onClick={() => handleUpdate(review)}>Edit</button>
+								<button onClick={() => handleDelete(review.id)}>Delete</button>
+							</>
 						)}
 					</div>
 				))
@@ -70,7 +91,9 @@ const SpotReviews = () => {
 						max="5"
 						placeholder="Rating (1-5)"
 					/>
-					<button type="submit">Submit Review</button>
+					<button type="submit">
+						{isEditing ? "Update Review" : "Submit Review"}
+					</button>
 				</form>
 			)}
 		</div>
