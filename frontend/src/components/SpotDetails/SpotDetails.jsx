@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getSpotDetails } from "../../store/spots";
 import "./SpotDetails.css";
+import SpotReviews from "../SpotReviews/SpotReviews";
 
 const SpotDetails = () => {
 	const { id } = useParams();
@@ -30,6 +31,7 @@ const SpotDetails = () => {
 			<p>
 				<strong>${spot.price}</strong> / night
 			</p>
+			<SpotReviews spotId={id} />
 		</div>
 	);
 };
