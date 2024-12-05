@@ -5,7 +5,7 @@ import Navigation from "./components/Navigation/Navigation";
 import SpotList from "./components/SpotList/SpotList";
 import SpotDetails from "./components/SpotDetails/SpotDetails";
 import LandingPage from "./components/LandingPage/LandingPage";
-// import NotFound from './components/NotFound/NotFound';
+import NotFound from "./components/NotFound/NotFound";
 import * as sessionActions from "./store/session";
 import SpotReviews from "./components/SpotReviews/SpotReviews";
 
@@ -45,6 +45,7 @@ const router = createBrowserRouter([
 			{ path: "/spots", element: <SpotList /> },
 			{ path: "/spots/:id", element: <SpotDetails /> },
 			{ path: "/spots/:id/reviews", element: <SpotReviews /> },
+			{ path: "*", element: <NotFound /> },
 		],
 	},
 ]);
