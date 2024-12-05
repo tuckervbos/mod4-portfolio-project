@@ -99,7 +99,9 @@ export const getSpotDetails = (id) => async (dispatch) => {
 };
 
 //* reducer:
-const initialState = {};
+const initialState = {
+	allSpots: {},
+};
 const spotsReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case LOAD_SPOTS: {

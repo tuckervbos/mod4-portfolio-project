@@ -1,0 +1,42 @@
+.landing-page {
+	padding: 20px;
+}
+
+.landing-page header h1 {
+	font-family: "Arial", sans-serif;
+	color: #ff385c;
+}
+
+.spots-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+	gap: 15px;
+}
+
+.spot-tile {
+	text-decoration: none;
+	color: black;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	overflow: hidden;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.spot-tile:hover {
+	transform: scale(1.05);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.spot-tile img {
+	width: 100%;
+	height: auto;
+}
+
+.spot-info {
+	padding: 10px;
+	font-size: 14px;
+}
+
+.spot-info p {
+	margin: 5px 0;
+}
