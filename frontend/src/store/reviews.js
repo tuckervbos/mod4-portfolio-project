@@ -28,26 +28,25 @@ const removeReview = (reviewId) => ({
 	reviewId,
 });
 
-// //= selector:
-// export const selectSpotReviews = createSelector(
-// 	(state) => state.reviews.spotReviews,
-// 	(spotReviews) => Object.values(spotReviews)
-// );
-
 //- thunks
 export const fetchSpotReviews = (spotId) => async (dispatch) => {
 	const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
 	if (res.ok) {
 		const data = await res.json();
-		dispatch(loadReviews(data.reviews));
+		console.log("API Response for spot reviews:", data); // Add this
+		dispatch(loadReviews(data.Reviews));
 	}
 };
 
 export const addReview = (spotId, review) => async (dispatch) => {
+	console.log("Review payload before conversion:", review);
+	const reviewPayload = { ...review, stars: parseInt(review.stars, 10) };
+	console.log("Review payload after conversion:", reviewPayload);
+
 	const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(review),
+		body: JSON.stringify(reviewPayload),
 	});
 	if (res.ok) {
 		const newReview = await res.json();
@@ -58,12 +57,14 @@ export const addReview = (spotId, review) => async (dispatch) => {
 export const updateReview = (reviewId, reviewData) => async (dispatch) => {
 	const res = await csrfFetch(`/api/reviews/${reviewId}`, {
 		method: "PUT",
+		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify(reviewData),
 	});
 
 	if (res.ok) {
 		const updatedReview = await res.json();
 		dispatch(updateReviewAction(updatedReview));
+		return updatedReview;
 	}
 };
 
@@ -79,8 +80,18 @@ const initialState = { spotReviews: {} };
 
 export default function reviewsReducer(state = initialState, action) {
 	switch (action.type) {
-		case LOAD_REVIEWS:
-			return { ...state, spotReviews: { ...action.reviews } };
+		case LOAD_REVIEWS: {
+			console.log("Reducer LOAD_REVIEWS action payload:", action.reviews);
+			if (!action.reviews) {
+				console.error("No reviews found in action payload");
+				return state;
+			}
+			const newReviews = {};
+			action.reviews.forEach((review) => {
+				newReviews[review.id] = review;
+			});
+			return { ...state, spotReviews: newReviews };
+		}
 		case ADD_REVIEW:
 			return {
 				...state,

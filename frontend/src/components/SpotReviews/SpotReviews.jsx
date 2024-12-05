@@ -14,6 +14,7 @@ const SpotReviews = () => {
 	const reviews = useSelector((state) =>
 		Object.values(state.reviews.spotReviews)
 	);
+	console.log("Reviews fetched from redux:", reviews);
 	const sessionUser = useSelector((state) => state.session.user);
 	const [reviewText, setReviewText] = useState("");
 	const [stars, setStars] = useState(0);
@@ -21,23 +22,35 @@ const SpotReviews = () => {
 	const [editingReviewId, setEditingReviewId] = useState(null);
 
 	useEffect(() => {
-		dispatch(fetchSpotReviews(spotId));
+		if (spotId) {
+			dispatch(fetchSpotReviews(spotId));
+		}
 	}, [dispatch, spotId]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		if (reviewText.length < 10 || stars < 1) {
-			alert("Please provide at least 10 characters and a rating.");
+
+		if (reviewText.length < 10 || stars < 1 || stars > 5) {
+			alert(
+				"Please provide at least 10 characters and a rating between 1 and 5."
+			);
 			return;
 		}
+
+		const parsedStars = parseInt(stars, 10);
 		if (isEditing) {
 			await dispatch(
-				updateReview(editingReviewId, { review: reviewText, stars })
+				updateReview(editingReviewId, {
+					review: reviewText,
+					stars: parsedStars,
+				})
 			);
 			setIsEditing(false);
 			setEditingReviewId(null);
 		} else {
-			await dispatch(addReview(spotId, { review: reviewText, stars }));
+			await dispatch(
+				addReview(spotId, { review: reviewText, stars: parsedStars })
+			);
 		}
 		setReviewText("");
 		setStars(0);
