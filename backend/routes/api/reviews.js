@@ -184,6 +184,8 @@ router.put(
 	async (req, res, next) => {
 		const { reviewId } = req.params;
 		const { review, stars } = req.body;
+		console.log("Request body:", req.body);
+		console.log("Request params:", req.params);
 
 		try {
 			const existingReview = await Review.findByPk(reviewId);

@@ -488,6 +488,8 @@ router.post(
 	async (req, res, next) => {
 		const { spotId } = req.params;
 		const { review, stars } = req.body;
+		console.log("Request body:", req.body);
+		console.log("Request params:", req.params);
 
 		try {
 			const spot = await Spot.findByPk(spotId);
@@ -500,15 +502,18 @@ router.post(
 			});
 			if (existingReview) {
 				return res
-					.status(500)
+					.status(403)
 					.json({ message: "User already has a review for this spot" });
 			}
+
 			const newReview = await Review.create({
-				spotId,
+				spotId: parseInt(spotId, 10),
 				userId: req.user.id,
-				review,
-				stars,
+				review: req.body.review,
+				stars: parseInt(stars, 10),
 			});
+			res.status(201).json(newReview);
+
 			res.status(201).json({
 				id: newReview.id,
 				userId: newReview.userId,
