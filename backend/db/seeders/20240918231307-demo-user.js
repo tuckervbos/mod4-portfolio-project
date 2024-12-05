@@ -15,25 +15,74 @@ module.exports = {
 			[
 				{
 					firstName: "Tucker",
-					lastName: "Demo",
-					email: "tucker@user.io",
-					username: "TuckerDemo1",
+					lastName: "Vandenbos",
+					email: "tucker@demo.com",
+					username: "TuckerDemo",
 					hashedPassword: bcrypt.hashSync("password"),
 				},
 				{
 					firstName: "DJ",
-					lastName: "Demo",
-					email: "dj@user.io",
-					username: "DJDemo2",
+					lastName: "Smith",
+					email: "dj@user.com",
+					username: "DJSmith",
 					hashedPassword: bcrypt.hashSync("password"),
 				},
-				// {	id: 3,
-				// 	firstName: "Josh",
-				// 	lastName: "Demolition",
-				// 	email: "josh@user.io",
-				// 	username: "JoshDemo3",
-				// 	hashedPassword: bcrypt.hashSync("password"),
-				// },
+				{
+					firstName: "Josh",
+					lastName: "Brown",
+					email: "josh@user.com",
+					username: "JoshB",
+					hashedPassword: bcrypt.hashSync("password"),
+				},
+				{
+					firstName: "Lisa",
+					lastName: "Jones",
+					email: "lisa@user.com",
+					username: "LisaJ",
+					hashedPassword: bcrypt.hashSync("password"),
+				},
+				{
+					firstName: "Emma",
+					lastName: "Van Dijk",
+					email: "emma@user.com",
+					username: "EmmaVD",
+					hashedPassword: bcrypt.hashSync("password"),
+				},
+				{
+					firstName: "Tom",
+					lastName: "Jansen",
+					email: "tom@user.com",
+					username: "TomJ",
+					hashedPassword: bcrypt.hashSync("password"),
+				},
+				{
+					firstName: "Eva",
+					lastName: "De Vries",
+					email: "eva@user.com",
+					username: "EvaDV",
+					hashedPassword: bcrypt.hashSync("password"),
+				},
+				{
+					firstName: "Liam",
+					lastName: "Bakker",
+					email: "liam@user.com",
+					username: "LiamB",
+					hashedPassword: bcrypt.hashSync("password"),
+				},
+				{
+					firstName: "Sophia",
+					lastName: "Visser",
+					email: "sophia@user.com",
+					username: "SophiaV",
+					hashedPassword: bcrypt.hashSync("password"),
+				},
+				{
+					firstName: "Lucas",
+					lastName: "Meijer",
+					email: "lucas@user.com",
+					username: "LucasM",
+					hashedPassword: bcrypt.hashSync("password"),
+				},
 			],
 			{ validate: true }
 		);
@@ -43,7 +92,20 @@ module.exports = {
 		options.tableName = "Users";
 		const Op = Sequelize.Op;
 		return queryInterface.bulkDelete(options, {
-			username: { [Op.in]: ["TuckerDemo1", "DJDemo2", "JoshDemo3"] },
+			username: {
+				[Op.in]: [
+					"TuckerDemo",
+					"DJSmith",
+					"JoshB",
+					"LisaJ",
+					"EmmaVD",
+					"TomJ",
+					"EvaDV",
+					"LiamB",
+					"SophiaV",
+					"LucasM",
+				],
+			},
 		});
 	},
 };
