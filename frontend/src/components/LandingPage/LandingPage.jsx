@@ -1,34 +1,44 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getAllSpots } from "../../store/spots";
 import "./LandingPage.css";
 
 function LandingPage() {
 	const dispatch = useDispatch();
+	const [loading, setLoading] = useState(true);
 	const spots = useSelector((state) =>
 		Object.values(state.spots.allSpots || {})
 	);
 
 	useEffect(() => {
-		dispatch(getAllSpots());
+		dispatch(getAllSpots()).then(() => setLoading(false));
 	}, [dispatch]);
 
+	if (loading) {
+		return <p>Loading spots...</p>;
+	}
+
 	return (
-		<div className="landing-page">
-			<div className="spots-grid">
-				{spots.map((spot) => (
-					<NavLink to={`/spots/${spot.id}`} key={spot.id} className="spot-tile">
-						<img src={spot.previewImage} alt={`${spot.name}`} />
-						<div className="spot-info">
-							<p>
-								{spot.city}, {spot.state}
-							</p>
-							<p>${spot.price}/night</p>
+		<div className="spots-grid">
+			{spots.map((spot) => (
+				<Link to={`/spots/${spot.id}`} key={spot.id} className="spot-card">
+					<img src={spot.previewImage} alt={spot.name} className="spot-image" />
+					<div className="spot-info">
+						<div className="spot-location">
+							{spot.city}, {spot.state}
 						</div>
-					</NavLink>
-				))}
-			</div>
+						<div className="spot-price">${spot.price.toFixed(2)} night</div>
+						<div className="spot-rating">
+							⭐
+							{spot.avgRating !== null && spot.avgRating !== undefined
+								? spot.avgRating.toFixed(1)
+								: "No rating yet"}
+						</div>
+					</div>
+					<div>{spot.avgRating}</div>
+				</Link>
+			))}
 		</div>
 	);
 }

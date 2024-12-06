@@ -1,26 +1,123 @@
 .spot-details {
-	max-width: 800px;
-	margin: 20px auto;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.spot-title {
+	font-size: 2.5rem;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.spot-location {
+	font-size: 1.25rem;
+	margin-bottom: 20px;
+	color: #555;
+}
+
+.spot-images {
+	display: flex;
+	gap: 20px;
+	margin-bottom: 30px;
+	align-items: stretch;
+}
+
+.primary-image {
+	flex: 1;
+	aspect-ratio: 16/9;
+}
+
+.primary-image img {
+	object-fit: cover;
+	width: 100%;
+	height: 100%;
+	border-radius: 8px;
+}
+
+.secondary-images {
+	flex: 1;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+	gap: 10px;
+}
+
+.secondary-images img {
+	object-fit: cover; /* Maintain image proportions and fill grid cells */
+
+	width: 100%; /* Take full width of the grid cell */
+	height: 100%; /* Take full height of the grid cell */
+	border-radius: 8px;
+}
+
+.spot-image {
+	width: 100%;
+	height: 170px;
+	object-fit: cover;
+	border-radius: 8px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.spot-image:hover {
+	transform: scale(1.05);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.content-container {
+	display: flex;
+	gap: 20px;
+	margin-top: 30px;
+}
+
+.description-container {
+	flex: 3;
+}
+
+.hosted-by {
+	margin-bottom: 10px;
+	font-size: 1.2rem;
+	font-weight: bold;
+}
+
+.spot-description {
+	color: #555;
+	font-size: 1rem;
+}
+
+.price-box {
+	flex: 1;
 	padding: 20px;
 	border: 1px solid #ddd;
 	border-radius: 8px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-	background-color: #fff;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	text-align: center;
 }
 
-.spot-details h1 {
-	font-size: 2rem;
+.price-box .price {
+	font-size: 1.5rem;
+	font-weight: bold;
 	margin-bottom: 10px;
 }
 
-.spot-details img {
-	width: 100%;
-	height: auto;
-	border-radius: 8px;
-	margin-bottom: 20px;
-}
-
-.spot-details p {
+.price-box .rating {
 	font-size: 1rem;
-	margin-bottom: 10px;
+	color: #555;
+	margin-bottom: 15px;
+}
+
+.reserve-button {
+	background-color: #007b5f;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.reserve-button:hover {
+	background-color: #005f47;
 }
