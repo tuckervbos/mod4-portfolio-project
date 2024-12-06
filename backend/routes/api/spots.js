@@ -328,6 +328,7 @@ router.get("/:spotId", async (req, res, next) => {
 			numReviews: spot.dataValues.numReviews || 0,
 			avgStarRating: spot.dataValues.avgRating || null,
 			SpotImages: spot.SpotImages,
+			previewImage: spot.SpotImages.find((img) => img.preview)?.url || null,
 			Owner: {
 				id: spot.Owner.id,
 				firstName: spot.Owner.firstName,
