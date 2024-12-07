@@ -41,7 +41,7 @@ function ProfileButton({ user }) {
 
 	return (
 		<>
-			<button onClick={toggleMenu}>
+			<button className="profile-button" onClick={toggleMenu}>
 				<GiHamburgerMenu />
 				<FaUserCircle />
 			</button>
@@ -61,15 +61,14 @@ function ProfileButton({ user }) {
 				) : (
 					<>
 						<OpenModalMenuItem
-							itemText="Log In"
-							onItemClick={closeMenu}
-							modalComponent={<LoginFormModal />}
-						/>
-
-						<OpenModalMenuItem
 							itemText="Sign Up"
 							onItemClick={closeMenu}
 							modalComponent={<SignupFormModal />}
+						/>
+						<OpenModalMenuItem
+							itemText="Log In"
+							onItemClick={closeMenu}
+							modalComponent={<LoginFormModal />}
 						/>
 					</>
 				)}

@@ -5,7 +5,7 @@ const SpotCard = ({ spot }) => {
 	const { id, name, city, state, price, avgRating, previewImage } = spot;
 
 	return (
-		<div className="spot-card">
+		<div className="spot-card" title={name}>
 			<Link to={`/spots/${id}`} title={name}>
 				<img
 					src={previewImage || "/placeholder.jpg"}
