@@ -2,10 +2,12 @@
 	display: grid;
 	grid-template-columns: repeat(
 		auto-fit,
-		minmax(200px, 1fr)
+		minmax(220px, 1fr)
 	); /* Adjust for responsiveness */
-	gap: 20px;
+	gap: 25px;
+	margin: 20px 0 auto;
 	padding: 20px;
+	max-width: calc(4 * 250px + 3 * 20px);
 	justify-items: center; /* Center items in the grid */
 }
 
@@ -19,7 +21,7 @@
 	border: 1px solid #ddd;
 	/* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
 	/* overflow: hidden; Ensure nothing overflows */
-	width: 240px; /* Match the size in the wireframe */
+	width: 225px; /* Match the size in the wireframe */
 	height: 250px; /* Keep a consistent card height */
 	margin-bottom: 50px;
 	/* transition: transform 0.2s ease, box-shadow 0.2s ease; */

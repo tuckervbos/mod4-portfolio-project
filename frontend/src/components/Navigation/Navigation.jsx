@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ProfileButton from "./ProfileButton";
 import { PiWindmill } from "react-icons/pi";
+import { Link } from "react-router-dom";
 import "./Navigation.css";
 
 function Navigation({ isLoaded }) {
@@ -16,6 +17,11 @@ function Navigation({ isLoaded }) {
 				</NavLink>
 			</div>
 			<div className="right-nav">
+				{sessionUser && (
+					<Link to="/spots/new" className="create-spot-button">
+						Create a New Spot
+					</Link>
+				)}
 				{isLoaded && <ProfileButton user={sessionUser} />}
 			</div>
 		</nav>

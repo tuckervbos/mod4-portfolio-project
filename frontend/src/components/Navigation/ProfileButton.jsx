@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { FaUserCircle } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import * as sessionActions from "../../store/session";
 import OpenModalMenuItem from "./OpenModalMenuItem";
 import LoginFormModal from "../LoginFormModal/LoginFormModal";
@@ -9,6 +11,7 @@ import SignupFormModal from "../SignupFormModal/SignupFormModal";
 
 function ProfileButton({ user }) {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const [showMenu, setShowMenu] = useState(false);
 	const ulRef = useRef(); // created a reference, attached to <ul> elem
 
@@ -35,6 +38,7 @@ function ProfileButton({ user }) {
 		e.preventDefault();
 		dispatch(sessionActions.logout());
 		closeMenu();
+		navigate("/");
 	};
 
 	const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
@@ -49,11 +53,13 @@ function ProfileButton({ user }) {
 			<ul className={ulClassName} ref={ulRef}>
 				{user ? (
 					<>
-						<li>{user.username}</li>
-						<li>
-							{user.firstName} {user.lastName}
-						</li>
+						<li>Hello, {user.firstName}</li>
 						<li>{user.email}</li>
+						<li>
+							<Link to="/manage-spots" onClick={closeMenu}>
+								Manage Spots
+							</Link>
+						</li>
 						<li>
 							<button onClick={logout}>Log Out</button>
 						</li>
@@ -61,14 +67,14 @@ function ProfileButton({ user }) {
 				) : (
 					<>
 						<OpenModalMenuItem
-							itemText="Sign Up"
-							onItemClick={closeMenu}
-							modalComponent={<SignupFormModal />}
-						/>
-						<OpenModalMenuItem
 							itemText="Log In"
 							onItemClick={closeMenu}
 							modalComponent={<LoginFormModal />}
+						/>
+						<OpenModalMenuItem
+							itemText="Sign Up"
+							onItemClick={closeMenu}
+							modalComponent={<SignupFormModal />}
 						/>
 					</>
 				)}

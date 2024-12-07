@@ -7,6 +7,7 @@ const ADD_SPOT = "spots/ADD_SPOT";
 const UPDATE_SPOT = "spots/UPDATE_SPOT";
 const REMOVE_SPOT = "spots/REMOVE_SPOT";
 const LOAD_SINGLE_SPOT = "spots/LOAD_SINGLE_SPOT";
+const ADD_IMAGES = "spots/ADD_IMAGES";
 
 //> action creators:
 const loadSpots = (spots) => ({
@@ -37,6 +38,11 @@ const removeSpot = (spotId) => ({
 const loadSingleSpot = (spot) => ({
 	type: LOAD_SINGLE_SPOT,
 	spot,
+});
+
+const addImages = (images) => ({
+	type: ADD_IMAGES,
+	images,
 });
 
 //- thunks:
@@ -98,6 +104,25 @@ export const getSpotDetails = (id) => async (dispatch) => {
 	}
 };
 
+export const addSpotImages = (spotId, images) => async (dispatch) => {
+	const imageRequests = images.map((image, idx) => {
+		return csrfFetch(`/api/spots/${spotId}/images`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				url: image.url,
+				preview: idx === 0,
+			}),
+		});
+	});
+
+	const responses = await Promise.all(imageRequests);
+	const imagesData = await Promise.all(responses.map((res) => res.json()));
+
+	dispatch(addImages(imagesData));
+	return imagesData;
+};
+
 //* reducer:
 const initialState = {
 	allSpots: {},
@@ -127,6 +152,15 @@ const spotsReducer = (state = initialState, action) => {
 		}
 		case LOAD_SINGLE_SPOT:
 			return { ...state, singleSpot: action.spot };
+		case ADD_IMAGES: {
+			return {
+				...state,
+				allSpots: {
+					...state.allSpots,
+					images: [...(state.allSpots.images || []), ...action.images],
+				},
+			};
+		}
 		default:
 			return state;
 	}

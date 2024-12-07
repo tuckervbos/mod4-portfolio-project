@@ -41,7 +41,7 @@ function LandingPage() {
 							<div className="spot-rating">
 								{typeof spot.avgRating === "number" && spot.avgRating >= 0
 									? `⭐ ${spot.avgRating.toFixed(1)}`
-									: "⭐ No rating yet"}
+									: "⭐ New"}
 							</div>
 						</div>
 					</Link>
