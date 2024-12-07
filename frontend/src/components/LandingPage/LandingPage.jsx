@@ -10,7 +10,7 @@ function LandingPage() {
 	const spots = useSelector((state) =>
 		Object.values(state.spots.allSpots || {})
 	);
-
+	console.log("Spots fetched from Redux:", spots);
 	useEffect(() => {
 		dispatch(getAllSpots()).then(() => setLoading(false));
 	}, [dispatch]);
