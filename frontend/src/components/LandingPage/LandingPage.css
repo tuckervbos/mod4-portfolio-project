@@ -1,38 +1,45 @@
 .spots-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	grid-template-columns: repeat(
+		auto-fit,
+		minmax(200px, 1fr)
+	); /* Adjust for responsiveness */
 	gap: 20px;
 	padding: 20px;
+	justify-items: center; /* Center items in the grid */
 }
 
 .spot-card {
 	display: flex;
 	flex-direction: column;
 	text-decoration: none;
-	color: black;
+	/* align-items: center; */
+	/* text-align: center; */
+	background-color: #fff;
 	border: 1px solid #ddd;
-	border-radius: 8px;
-
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-	transition: transform 0.2s, box-shadow 0.2s;
-	height: 240px;
+	/* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
+	/* overflow: hidden; Ensure nothing overflows */
+	width: 240px; /* Match the size in the wireframe */
+	height: 250px; /* Keep a consistent card height */
+	margin-bottom: 50px;
+	/* transition: transform 0.2s ease, box-shadow 0.2s ease; */
 }
 
 .spot-card:hover {
 	transform: scale(1.02);
-	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.spot-image {
-	width: 100%;
-	aspect-ratio: 1 / 1;
-	object-fit: cover;
-	border-bottom: 1px solid #ddd;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .spot-info {
 	padding: 10px;
-	font-size: 12px;
+	font-size: 14px;
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 10px;
+}
+
+.spot-left {
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
@@ -42,16 +49,19 @@
 	font-size: 14px;
 	color: #333;
 	font-weight: 600;
+	margin-bottom: 5px;
 }
 
 .spot-price {
-	font-size: 12px;
-	color: #777;
+	font-size: 14px;
+	color: #555;
 	font-weight: 500;
 }
 
 .spot-rating {
-	visibility: visible;
 	display: flex;
-	color: #ffa41b;
+	align-items: center;
+	white-space: nowrap;
+	color: black;
+	font-size: 14px;
 }

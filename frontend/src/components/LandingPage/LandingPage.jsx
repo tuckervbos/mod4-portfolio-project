@@ -11,6 +11,7 @@ function LandingPage() {
 		Object.values(state.spots.allSpots || {})
 	);
 	console.log("Spots fetched from Redux:", spots);
+
 	useEffect(() => {
 		dispatch(getAllSpots()).then(() => setLoading(false));
 	}, [dispatch]);
@@ -21,24 +22,31 @@ function LandingPage() {
 
 	return (
 		<div className="spots-grid">
-			{spots.map((spot) => (
-				<Link to={`/spots/${spot.id}`} key={spot.id} className="spot-card">
-					<img src={spot.previewImage} alt={spot.name} className="spot-image" />
-					<div className="spot-info">
-						<div className="spot-location">
-							{spot.city}, {spot.state}
+			{spots.map((spot) => {
+				console.log("Spot data for rendering:", spot.avgRating);
+				return (
+					<Link to={`/spots/${spot.id}`} key={spot.id} className="spot-card">
+						<img
+							src={spot.previewImage}
+							alt={spot.name}
+							className="spot-image"
+						/>
+						<div className="spot-info">
+							<div className="spot-left">
+								<div className="spot-location">
+									{spot.city}, {spot.state}
+								</div>
+								<div className="spot-price">${spot.price.toFixed(2)} night</div>
+							</div>
+							<div className="spot-rating">
+								{typeof spot.avgRating === "number" && spot.avgRating >= 0
+									? `⭐ ${spot.avgRating.toFixed(1)}`
+									: "⭐ No rating yet"}
+							</div>
 						</div>
-						<div className="spot-price">${spot.price.toFixed(2)} night</div>
-						<div className="spot-rating">
-							⭐
-							{spot.avgRating !== null && spot.avgRating !== undefined
-								? spot.avgRating.toFixed(1)
-								: "No rating yet"}
-						</div>
-					</div>
-					<div>{spot.avgRating}</div>
-				</Link>
-			))}
+					</Link>
+				);
+			})}
 		</div>
 	);
 }
