@@ -6,6 +6,7 @@ const LOAD_REVIEWS = "reviews/LOAD_REVIEWS";
 const ADD_REVIEW = "reviews/ADD_REVIEW";
 const REMOVE_REVIEW = "reviews/REMOVE_REVIEW";
 const UPDATE_REVIEW = "reviews/UPDATE_REVIEW";
+const CLEAR_SPOT_REVIEWS = "reviews/CLEAR_SPOT_REVIEWS";
 
 //> action creators
 const loadReviews = (reviews) => ({
@@ -26,6 +27,10 @@ const updateReviewAction = (review) => ({
 const removeReview = (reviewId) => ({
 	type: REMOVE_REVIEW,
 	reviewId,
+});
+
+export const clearSpotReviews = () => ({
+	type: CLEAR_SPOT_REVIEWS,
 });
 
 //- thunks
@@ -87,9 +92,11 @@ export default function reviewsReducer(state = initialState, action) {
 				return state;
 			}
 			const newReviews = {};
-			action.reviews.forEach((review) => {
-				newReviews[review.id] = review;
-			});
+			action.reviews
+				.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort reviews by date (newest first)
+				.forEach((review) => {
+					newReviews[review.id] = review;
+				});
 			return { ...state, spotReviews: newReviews };
 		}
 		case ADD_REVIEW:
@@ -101,7 +108,7 @@ export default function reviewsReducer(state = initialState, action) {
 				},
 			};
 		case REMOVE_REVIEW: {
-			const newState = { ...state };
+			const newState = { ...state, spotReviews: { ...state.spotReviews } };
 			delete newState.spotReviews[action.reviewId];
 			return newState;
 		}
@@ -113,6 +120,8 @@ export default function reviewsReducer(state = initialState, action) {
 					[action.review.id]: action.review,
 				},
 			};
+		case CLEAR_SPOT_REVIEWS:
+			return { ...state, spotReviews: {} };
 		default:
 			return state;
 	}

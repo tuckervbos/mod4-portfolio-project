@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
 	fetchSpotReviews,
-	addReview,
 	deleteReview,
-	updateReview,
+	clearSpotReviews,
+	// updateReview,
 } from "../../store/reviews";
+import "./SpotReviews.css";
 
 const SpotReviews = () => {
 	const { id: spotId } = useParams();
@@ -14,100 +15,77 @@ const SpotReviews = () => {
 	const reviews = useSelector((state) =>
 		Object.values(state.reviews.spotReviews)
 	);
-	console.log("Reviews fetched from redux:", reviews);
 	const sessionUser = useSelector((state) => state.session.user);
-	const [reviewText, setReviewText] = useState("");
-	const [stars, setStars] = useState(0);
-	const [isEditing, setIsEditing] = useState(false);
-	const [editingReviewId, setEditingReviewId] = useState(null);
+	const spot = useSelector((state) => state.spots[spotId]);
+	// const [isEditing, setIsEditing] = useState(false);
+	// const [editingReviewId, setEditingReviewId] = useState(null);
 
 	useEffect(() => {
 		if (spotId) {
 			dispatch(fetchSpotReviews(spotId));
 		}
+		return () => dispatch(clearSpotReviews({ spotId }));
 	}, [dispatch, spotId]);
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
+	const sortedReviews = [...reviews].sort(
+		(a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+	);
 
-		if (reviewText.length < 10 || stars < 1 || stars > 5) {
-			alert(
-				"Please provide at least 10 characters and a rating between 1 and 5."
-			);
-			return;
-		}
+	// const handleUpdate = (review) => {
+	// 	setReviewText(review.review);
+	// 	setStars(review.stars);
+	// 	setIsEditing(true);
+	// 	setEditingReviewId(review.id);
+	// };
 
-		const parsedStars = parseInt(stars, 10);
-		if (isEditing) {
-			await dispatch(
-				updateReview(editingReviewId, {
-					review: reviewText,
-					stars: parsedStars,
-				})
-			);
-			setIsEditing(false);
-			setEditingReviewId(null);
-		} else {
-			await dispatch(
-				addReview(spotId, { review: reviewText, stars: parsedStars })
-			);
-		}
-		setReviewText("");
-		setStars(0);
-	};
-
-	const handleUpdate = (review) => {
-		setReviewText(review.review);
-		setStars(review.stars);
-		setIsEditing(true);
-		setEditingReviewId(review.id);
-	};
-
-	const handleDelete = (reviewId) => {
-		dispatch(deleteReview(reviewId));
-	};
+	// const handleDelete = (reviewId) => {
+	// 	dispatch(deleteReview(reviewId));
+	// };
 
 	return (
 		<div className="spot-reviews">
 			<h2>Reviews</h2>
-			{reviews.length === 0 ? (
-				<p>No reviews yet, be the first to review!</p>
-			) : (
-				reviews.map((review) => (
-					<div key={review.id} className="review">
-						<p>
-							<strong>{review.User?.firstName}</strong>: {review.review}
-						</p>
-						<p>Rating: {review.stars} ⭐</p>
-						{sessionUser?.id === review.userId && (
-							<>
-								<button onClick={() => handleUpdate(review)}>Edit</button>
-								<button onClick={() => handleDelete(review.id)}>Delete</button>
-							</>
-						)}
-					</div>
-				))
-			)}
 
-			{sessionUser && (
-				<form onSubmit={handleSubmit}>
-					<textarea
-						value={reviewText}
-						onChange={(e) => setReviewText(e.target.value)}
-						placeholder="Leave your review here..."
-					/>
-					<input
-						type="number"
-						value={stars}
-						onChange={(e) => setStars(e.target.value)}
-						min="1"
-						max="5"
-						placeholder="Rating (1-5)"
-					/>
-					<button type="submit">
-						{isEditing ? "Update Review" : "Submit Review"}
-					</button>
-				</form>
+			{reviews.length === 0 ? (
+				!sessionUser || spot?.ownerId === sessionUser.id ? (
+					<p className="no-reviews">No reviews yet.</p>
+				) : (
+					<p className="no-reviews">Be the first to post a review!</p>
+				)
+			) : (
+				sortedReviews.map((review) => {
+					const formattedDate = new Intl.DateTimeFormat("en-US", {
+						month: "long",
+						year: "numeric",
+					}).format(new Date(review.createdAt));
+
+					return (
+						<div key={review.id} className="review">
+							<p>
+								<strong>{review.User?.firstName || "Anonymous"}</strong> -{" "}
+								<span className="review-date">{formattedDate}</span>
+							</p>
+							<p>{review.review}</p>
+							<p>Rating: {review.stars} ⭐</p>
+							{sessionUser?.id === review.userId && (
+								<div className="review-buttons">
+									<button
+										className="edit-review-button"
+										onClick={() => console.log("Edit logic")}
+									>
+										Edit
+									</button>
+									<button
+										className="delete-review-button"
+										onClick={() => dispatch(deleteReview(review.id))}
+									>
+										Delete
+									</button>
+								</div>
+							)}
+						</div>
+					);
+				})
 			)}
 		</div>
 	);

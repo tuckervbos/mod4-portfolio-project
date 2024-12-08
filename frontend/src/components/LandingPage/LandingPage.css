@@ -11,20 +11,29 @@
 	justify-items: center; /* Center items in the grid */
 }
 
+.spot-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	overflow: hidden;
+	border-radius: 8px;
+}
+
 .spot-card {
 	display: flex;
 	flex-direction: column;
 	text-decoration: none;
 	/* align-items: center; */
-	/* text-align: center; */
+	/* text-align: center;
 	background-color: #fff;
 	border: 1px solid #ddd;
 	/* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
-	/* overflow: hidden; Ensure nothing overflows */
+	overflow: hidden;
 	width: 225px; /* Match the size in the wireframe */
 	height: 250px; /* Keep a consistent card height */
 	margin-bottom: 50px;
 	/* transition: transform 0.2s ease, box-shadow 0.2s ease; */
+	position: relative;
 }
 
 .spot-card:hover {

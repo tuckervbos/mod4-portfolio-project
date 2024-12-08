@@ -4,11 +4,19 @@ import { useParams } from "react-router-dom";
 import { getSpotDetails } from "../../store/spots";
 import "./SpotDetails.css";
 import SpotReviews from "../SpotReviews/SpotReviews";
+import { useModal } from "../../context/Modal";
+import ReviewModal from "../ReviewModal/ReviewModal";
+import { addReview } from "../../store/reviews";
 
 const SpotDetails = () => {
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const spot = useSelector((state) => state.spots.singleSpot);
+	const user = useSelector((state) => state.session.user);
+	const reviews = useSelector((state) =>
+		spot?.id ? state.reviews[spot.id] || [] : []
+	);
+	const { setModalContent } = useModal();
 
 	useEffect(() => {
 		dispatch(getSpotDetails(id));
@@ -21,27 +29,43 @@ const SpotDetails = () => {
 		spot.previewImage || spot.SpotImages?.[0]?.url || "/placeholder.jpg";
 
 	const secondaryImages = spot.SpotImages?.slice(1, 5) || [];
+	const avgRating = spot.avgStarRating ? spot.avgStarRating.toFixed(1) : "New";
+	const reviewCount = spot.numReviews || 0;
+
+	const isUserSpot = user && spot.Owner && user.id === spot.Owner.id;
+	const hasUserPostedReview = reviews.some(
+		(review) => review.userId === user?.id
+	);
+
+	const handlePostReviewClick = () => {
+		setModalContent(
+			<ReviewModal
+				spotId={id}
+				onSubmit={(newReview) => {
+					dispatch(addReview(id, newReview));
+					dispatch(getSpotDetails(id));
+					// Add logic to update reviews and re-fetch details if necessary
+				}}
+			/>
+		);
+	};
 
 	return (
 		<div className="spot-details">
-			{/* spot title/location */}
 			<h1 className="spot-title">{spot.name}</h1>
 			<p className="spot-location">
 				{spot.city}, {spot.state}, {spot.country}
 			</p>
 
-			{/* images */}
 			<div className="spot-images">
-				{/* primary image */}
 				<div className="primary-image">
 					<img
 						src={primaryImage}
-						alt={spot.name}
+						alt={`${spot.name} primary`}
 						className="spot-image preview-image"
 					/>
 				</div>
 
-				{/* secondary images */}
 				<div className="secondary-images">
 					{secondaryImages.map((image) => (
 						<img
@@ -54,9 +78,7 @@ const SpotDetails = () => {
 				</div>
 			</div>
 
-			{/* Content Layout */}
 			<div className="content-container">
-				{/* Hosted By and Description */}
 				<div className="description-container">
 					<div className="hosted-by">
 						<h2>
@@ -68,14 +90,20 @@ const SpotDetails = () => {
 					</div>
 				</div>
 
-				{/* Price and Reserve Box */}
 				<div className="price-box">
-					<div className="price">
-						<strong>${spot.price}</strong> / night
-					</div>
-					<div className="rating">
-						⭐ {spot.avgRating || "No rating yet"} ({spot.numReviews || 0}{" "}
-						reviews)
+					<div className="price-and-reviews">
+						<div className="price">
+							<strong>${spot.price.toFixed(2)}</strong> / night
+						</div>
+						<div className="rating">
+							⭐ {avgRating}
+							{reviewCount > 0 && (
+								<>
+									{" · "}
+									{reviewCount} {reviewCount === 1 ? "Review" : "Reviews"}
+								</>
+							)}
+						</div>
 					</div>
 					<button
 						className="reserve-button"
@@ -86,8 +114,34 @@ const SpotDetails = () => {
 				</div>
 			</div>
 
-			{/* reviews */}
-			<SpotReviews spotId={id} />
+			<div className="reviews-container">
+				<h2 className="reviews-title">
+					⭐ {avgRating}
+					{reviewCount > 0 && (
+						<>
+							{" · "}
+							{reviewCount} {reviewCount === 1 ? "Review" : "Reviews"}
+						</>
+					)}
+				</h2>
+				{!isUserSpot && !hasUserPostedReview && user && (
+					<button
+						className="post-review-button"
+						onClick={handlePostReviewClick}
+					>
+						Post Your Review
+					</button>
+				)}
+				{reviewCount === 0 ? (
+					!isUserSpot ? (
+						<p className="no-reviews">Be the first to post a review!</p>
+					) : (
+						<p className="no-reviews">No reviews yet.</p>
+					)
+				) : (
+					<SpotReviews spotId={id} />
+				)}
+			</div>
 		</div>
 	);
 };

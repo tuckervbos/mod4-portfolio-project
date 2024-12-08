@@ -1,0 +1,59 @@
+.review-form-container {
+	max-width: 400px;
+	width: 100%;
+	padding: 20px;
+	border: 2px solid #f97300;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	background-color: white;
+	border-radius: 10px;
+	position: relative;
+	text-align: center;
+}
+
+h1 {
+	text-align: center;
+	margin-bottom: 20px;
+	font-size: 1.5rem;
+	color: black;
+}
+
+textarea {
+	width: 100%;
+	height: 80px;
+	margin: 10px 0;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	resize: none;
+}
+
+.stars-container {
+	margin: 10px 0;
+}
+
+.stars-container input {
+	margin-right: 5px;
+	width: 50px;
+}
+
+button {
+	width: 100%;
+	padding: 12px;
+	background-color: #f97300;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+button:disabled {
+	background-color: #ccc;
+	cursor: not-allowed;
+}
+
+.error-message {
+	color: red;
+	font-size: 0.9rem;
+	margin-bottom: 10px;
+	text-align: center;
+}

@@ -23,7 +23,6 @@ function LandingPage() {
 	return (
 		<div className="spots-grid">
 			{spots.map((spot) => {
-				console.log("Spot data for rendering:", spot.avgRating);
 				return (
 					<Link to={`/spots/${spot.id}`} key={spot.id} className="spot-card">
 						<img
