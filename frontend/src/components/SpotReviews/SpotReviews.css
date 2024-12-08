@@ -18,13 +18,21 @@ input {
 	padding: 10px;
 }
 
-button {
+.review-buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.edit-review-button,
+.delete-review-button {
 	padding: 10px 20px;
 	background-color: #f97300;
 	color: white;
 	border: none;
 	border-radius: 5px;
 	cursor: pointer;
+	max-width: 150px;
 }
 
 .post-review-button {

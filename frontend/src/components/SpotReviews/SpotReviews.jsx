@@ -47,7 +47,7 @@ const SpotReviews = () => {
 			<h2>Reviews</h2>
 
 			{reviews.length === 0 ? (
-				!sessionUser || spot?.ownerId === sessionUser.id ? (
+				!sessionUser || spot?.userId === sessionUser.id ? (
 					<p className="no-reviews">No reviews yet.</p>
 				) : (
 					<p className="no-reviews">Be the first to post a review!</p>

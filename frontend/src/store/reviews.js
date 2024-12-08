@@ -44,9 +44,7 @@ export const fetchSpotReviews = (spotId) => async (dispatch) => {
 };
 
 export const addReview = (spotId, review) => async (dispatch) => {
-	console.log("Review payload before conversion:", review);
 	const reviewPayload = { ...review, stars: parseInt(review.stars, 10) };
-	console.log("Review payload after conversion:", reviewPayload);
 
 	const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
 		method: "POST",

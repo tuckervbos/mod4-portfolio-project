@@ -5,6 +5,7 @@ import "./ReviewModal.css";
 function ReviewModal({ onSubmit }) {
 	const [reviewText, setReviewText] = useState("");
 	const [stars, setStars] = useState(0);
+	const [hoveredStars, setHoveredStars] = useState(0);
 	const [errors, setErrors] = useState({});
 
 	const { closeModal } = useModal();
@@ -24,7 +25,7 @@ function ReviewModal({ onSubmit }) {
 		setReviewText("");
 		setStars(0);
 		setErrors({});
-		closeModal(); // Close modal after submission
+		closeModal();
 	};
 
 	return (
@@ -42,14 +43,20 @@ function ReviewModal({ onSubmit }) {
 					<p className="error-message">{errors.reviewText}</p>
 				)}
 				<div className="stars-container">
-					<input
-						type="number"
-						value={stars}
-						onChange={(e) => setStars(Number(e.target.value))}
-						min="1"
-						max="5"
-					/>
-					<label>Stars</label>
+					{[1, 2, 3, 4, 5].map((star) => (
+						<span
+							key={star}
+							className={`star ${
+								star <= (hoveredStars || stars) ? "highlighted" : ""
+							}`}
+							onMouseEnter={() => setHoveredStars(star)}
+							onMouseLeave={() => setHoveredStars(0)}
+							onClick={() => setStars(star)}
+						>
+							★
+						</span>
+					))}
+					<label className="stars-label">Stars</label>
 				</div>
 				{errors.stars && <p className="error-message">{errors.stars}</p>}
 				<button type="submit" disabled={reviewText.length < 10 || stars < 1}>
