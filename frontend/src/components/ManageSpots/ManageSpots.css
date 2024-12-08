@@ -53,7 +53,7 @@
 
 .update-button,
 .delete-button {
-	background-color: #007b5f;
+	background-color: #f97300;
 	color: white;
 	border: none;
 	padding: 8px 12px;
@@ -63,15 +63,15 @@
 }
 
 .update-button:hover {
-	background-color: #005f47;
+	background-color: #dc6904;
 }
 
 .delete-button {
-	background-color: #d9534f;
+	background-color: #f97300;
 }
 
 .delete-button:hover {
-	background-color: #c9302c;
+	background-color: #dc6904;
 }
 
 .create-new-spot-link {

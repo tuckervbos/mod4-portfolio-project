@@ -1,0 +1,60 @@
+.delete-spot-modal {
+	max-width: 400px;
+	width: 100%;
+	padding: 20px;
+	background-color: white;
+	border: 2px solid #f97300;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	border-radius: 10px;
+	text-align: center;
+	position: relative;
+}
+
+.delete-spot-modal h1 {
+	text-align: center;
+	margin-bottom: 15px;
+	font-size: 1.5rem;
+	color: black;
+}
+
+.delete-spot-modal p {
+	margin-bottom: 20px;
+	color: #555;
+	font-size: 1rem;
+	line-height: 1.4;
+}
+
+.delete-spot-buttons {
+	display: flex;
+	flex-direction: column; /* Stack buttons vertically */
+	gap: 10px; /* Add spacing between buttons */
+}
+
+.delete-button,
+.cancel-button {
+	width: 100%;
+	padding: 12px;
+	font-size: 1rem;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.delete-button {
+	background-color: #f44336;
+	color: white;
+}
+
+.delete-button:hover {
+	background-color: #d32f2f;
+}
+
+.cancel-button {
+	background-color: #555;
+	color: white;
+}
+
+.cancel-button:hover {
+	background-color: #333;
+}

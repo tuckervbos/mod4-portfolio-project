@@ -1,0 +1,104 @@
+.update-spot-form-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+	background-color: #f9f9f9;
+}
+
+.update-spot-form {
+	width: 100%;
+	max-width: 450px;
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+}
+
+.update-spot-form h2 {
+	font-size: 1.6rem;
+	color: #333;
+	padding-left: 14px;
+	margin: 0;
+}
+
+.update-spot-form fieldset {
+	border: none;
+	margin-bottom: none;
+	border-bottom: 2px solid #f97300;
+}
+
+.update-spot-form legend {
+	font-size: 1.2rem;
+}
+
+.update-spot-form label {
+	font-size: 0.9rem;
+	color: #333;
+	margin-bottom: 7px;
+	display: block;
+}
+
+.update-spot-form input,
+.update-spot-form textarea {
+	width: 100%;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 8px;
+	font-size: 0.9rem;
+	box-sizing: border-box;
+	margin-bottom: 10px;
+	font-family: "Roboto", sans-serif;
+}
+
+.update-spot-form input:focus,
+.update-spot-form textarea:focus {
+	outline: none;
+	border-color: #f97300;
+}
+
+.update-spot-form textarea {
+	resize: none;
+	height: 70px;
+	padding-bottom: 10px;
+}
+
+.update-spot-form .city-state,
+.update-spot-form .lat-lng {
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.update-spot-form .city-state div,
+.update-spot-form .lat-lng div {
+	flex: 1;
+}
+
+.update-spot-form .error {
+	font-size: 0.85rem;
+	color: red;
+	margin-top: 3px;
+}
+
+.update-spot-form-button {
+	background-color: #f97300;
+	color: white;
+	font-size: 1.1rem;
+	padding: 4px 12px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+	width: fit-content;
+	margin: 9px auto;
+}
+
+.update-spot-form-button:hover {
+	background-color: #dc6904;
+}
+
+.update-spot-form .description {
+	margin-top: 0;
+	padding-left: 2px;
+}

@@ -8,6 +8,7 @@ import LandingPage from "./components/LandingPage/LandingPage";
 import NotFound from "./components/NotFound/NotFound";
 import CreateSpotForm from "./components/CreateSpotForm/CreateSpotForm";
 import ManageSpots from "./components/ManageSpots/ManageSpots";
+import UpdateSpotForm from "./components/UpdateSpotForm/UpdateSpotForm";
 import * as sessionActions from "./store/session";
 import SpotReviews from "./components/SpotReviews/SpotReviews";
 
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
 			{ path: "/spots/:id", element: <SpotDetails /> },
 			{ path: "/spots/:id/reviews", element: <SpotReviews /> },
 			{ path: "/spots/new", element: <CreateSpotForm /> },
+			{ path: "/spots/:id/edit", element: <UpdateSpotForm /> },
 			{ path: "/current", element: <ManageSpots /> },
 			{ path: "*", element: <NotFound /> },
 		],

@@ -167,9 +167,14 @@ const spotsReducer = (state = initialState, action) => {
 			return { ...state, [action.spot.id]: action.spot };
 		}
 		case REMOVE_SPOT: {
-			const newState = { ...state };
-			delete newState[action.spotId];
-			return newState;
+			return {
+				...state,
+				allSpots: {
+					...state.allSpots,
+					[action.spotId]: undefined,
+				},
+				userSpots: state.userSpots.filter((spot) => spot.id !== action.spotId),
+			};
 		}
 		case LOAD_SINGLE_SPOT:
 			return { ...state, singleSpot: action.spot };
