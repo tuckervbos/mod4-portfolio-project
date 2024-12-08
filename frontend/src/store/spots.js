@@ -8,6 +8,7 @@ const UPDATE_SPOT = "spots/UPDATE_SPOT";
 const REMOVE_SPOT = "spots/REMOVE_SPOT";
 const LOAD_SINGLE_SPOT = "spots/LOAD_SINGLE_SPOT";
 const ADD_IMAGES = "spots/ADD_IMAGES";
+const LOAD_USER_SPOTS = "spots/LOAD_USER_SPOTS";
 
 //> action creators:
 const loadSpots = (spots) => ({
@@ -43,6 +44,11 @@ const loadSingleSpot = (spot) => ({
 const addImages = (images) => ({
 	type: ADD_IMAGES,
 	images,
+});
+
+const loadUserSpots = (spots) => ({
+	type: LOAD_USER_SPOTS,
+	spots,
 });
 
 //- thunks:
@@ -122,8 +128,17 @@ export const addSpotImages = (spotId, images) => async (dispatch) => {
 	return imagesData;
 };
 
+export const fetchUserSpots = () => async (dispatch) => {
+	const res = await csrfFetch("/api/spots/current");
+	if (res.ok) {
+		const data = await res.json();
+		dispatch(loadUserSpots(data.Spots));
+	}
+};
+
 //* reducer:
 const initialState = {
+	userSpots: [],
 	allSpots: {},
 };
 const spotsReducer = (state = initialState, action) => {
@@ -134,6 +149,13 @@ const spotsReducer = (state = initialState, action) => {
 				newState[spot.id] = spot;
 			});
 			return { ...state, allSpots: newState };
+		}
+		case LOAD_USER_SPOTS: {
+			const userSpots = {};
+			action.spots.forEach((spot) => {
+				userSpots[spot.id] = spot;
+			});
+			return { ...state, userSpots: action.spots };
 		}
 		case LOAD_SPOT: {
 			return { ...state, [action.spot.id]: action.spot };
