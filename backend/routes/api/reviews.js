@@ -184,8 +184,6 @@ router.put(
 	async (req, res, next) => {
 		const { reviewId } = req.params;
 		const { review, stars } = req.body;
-		console.log("Request body:", req.body);
-		console.log("Request params:", req.params);
 
 		try {
 			const existingReview = await Review.findByPk(reviewId);
@@ -221,17 +219,36 @@ router.delete("/:reviewId", requireAuth, async (req, res, next) => {
 	const { reviewId } = req.params;
 
 	try {
-		const review = await Review.findByPk(reviewId);
+		const review = await Review.findByPk(reviewId, {
+			include: [{ model: Spot, as: "Spot" }],
+		});
 		if (!review) {
 			return res.status(404).json({ message: "Review couldn't be found" });
 		}
+
 		if (review.userId !== req.user.id) {
 			return res.status(403).json({ message: "Forbidden" });
 		}
 		await review.destroy();
 
-		return res.status(200).json({ message: "Successfully deleted" });
+		const spot = await Spot.findByPk(review.spotId, {
+			include: [{ model: Review, as: "Reviews" }],
+		});
+
+		const numReviews = spot.Reviews.length;
+		const avgRating =
+			numReviews > 0
+				? spot.Reviews.reduce((sum, r) => sum + r.stars, 0) / numReviews
+				: 0;
+
+		await spot.update({ numReviews, avgRating });
+
+		return res.status(200).json({
+			message: "Successfully deleted",
+			spot: { numReviews, avgRating },
+		});
 	} catch (err) {
+		console.error("Error deleting review:", err);
 		next(err);
 	}
 });

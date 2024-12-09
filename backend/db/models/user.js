@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
 				foreignKey: "userId",
 				onDelete: "CASCADE",
 				hooks: true,
+				as: "Reviews",
 			});
 
 			// A user can make many bookings

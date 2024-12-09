@@ -250,11 +250,13 @@ router.get("/:spotId/reviews", async (req, res, next) => {
 			stars: review.stars,
 			createdAt: review.createdAt,
 			updatedAt: review.updatedAt,
-			User: {
-				id: review.User.id,
-				firstName: review.User.firstName,
-				lastName: review.User.lastName,
-			},
+			User: review.User
+				? {
+						id: review.User.id,
+						firstName: review.User.firstName,
+						lastName: review.User.lastName,
+				  }
+				: null,
 			ReviewImages: review.ReviewImages.map((image) => ({
 				id: image.id,
 				url: image.url,
@@ -489,8 +491,6 @@ router.post(
 	async (req, res, next) => {
 		const { spotId } = req.params;
 		const { review, stars } = req.body;
-		console.log("Request body:", req.body);
-		console.log("Request params:", req.params);
 
 		try {
 			const spot = await Spot.findByPk(spotId);
@@ -510,19 +510,35 @@ router.post(
 			const newReview = await Review.create({
 				spotId: parseInt(spotId, 10),
 				userId: req.user.id,
-				review: req.body.review,
+				review,
 				stars: parseInt(stars, 10),
 			});
-			res.status(201).json(newReview);
 
+			// Recalculate avgRating and numReviews
+			const reviews = await Review.findAll({ where: { spotId } });
+			const numReviews = reviews.length;
+			const avgRating =
+				reviews.reduce((sum, review) => sum + review.stars, 0) / numReviews;
+
+			// Update the spot with the new data
+			await spot.update({ numReviews, avgRating });
+
+			// Respond with the new review and updated spot data
 			res.status(201).json({
-				id: newReview.id,
-				userId: newReview.userId,
-				spotId: newReview.spotId,
-				review: newReview.review,
-				stars: newReview.stars,
-				createdAt: newReview.createdAt,
-				updatedAt: newReview.updatedAt,
+				newReview: {
+					id: newReview.id,
+					userId: newReview.userId,
+					spotId: newReview.spotId,
+					review: newReview.review,
+					stars: newReview.stars,
+					createdAt: newReview.createdAt,
+					updatedAt: newReview.updatedAt,
+				},
+				spot: {
+					id: spot.id,
+					numReviews,
+					avgRating,
+				},
 			});
 		} catch (err) {
 			next(err);

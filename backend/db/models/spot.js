@@ -17,12 +17,14 @@ module.exports = (sequelize, DataTypes) => {
 		static associate(models) {
 			Spot.belongsTo(models.User, { as: "Owner", foreignKey: "ownerId" });
 			Spot.hasMany(models.Review, {
+				as: "Reviews",
 				foreignKey: "spotId",
 				onDelete: "CASCADE",
 				hooks: true,
 			});
 			Spot.hasMany(models.SpotImage, {
 				foreignKey: "spotId",
+				as: "SpotImages",
 				onDelete: "CASCADE",
 				hooks: true,
 			});
