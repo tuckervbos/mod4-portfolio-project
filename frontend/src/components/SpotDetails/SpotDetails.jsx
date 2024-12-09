@@ -28,10 +28,7 @@ const SpotDetails = () => {
 	const primaryImage =
 		spot.previewImage || spot.SpotImages?.[0]?.url || "/placeholder.jpg";
 	const secondaryImages = spot.SpotImages?.slice(1, 5) || [];
-	const avgRating =
-		spot.avgRating && spot.avgRating >= 0 && !isNaN(parseFloat(spot.avgRating))
-			? `${spot.avgRating.toFixed(1)}`
-			: "New";
+	const avgRating = spot.avgRating ? `${spot.avgRating.toFixed(1)}` : "New";
 	const reviewCount = spot.numReviews || 0;
 	const isUserSpot = user && spot.Owner && user.id === spot.Owner.id;
 
