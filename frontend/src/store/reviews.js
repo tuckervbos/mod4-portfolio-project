@@ -152,8 +152,8 @@ export default function reviewsReducer(state = initialState, action) {
 				},
 				singleSpot: {
 					...(state.singleSpot || {}),
+					avgRating: avgRating ? parseFloat(avgRating) : null,
 					numReviews,
-					avgRating,
 				},
 			};
 		}
