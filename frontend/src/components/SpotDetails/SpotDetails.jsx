@@ -27,15 +27,14 @@ const SpotDetails = () => {
 
 	const primaryImage =
 		spot.previewImage || spot.SpotImages?.[0]?.url || "/placeholder.jpg";
-
 	const secondaryImages = spot.SpotImages?.slice(1, 5) || [];
-	const avgRating = spot.avgStarRating ? spot.avgStarRating.toFixed(1) : "New";
+	const avgRating =
+		typeof spot.avgStarRating === "number" && spot.avgStarRating >= 0
+			? spot.avgStarRating.toFixed(1)
+			: "New";
 	const reviewCount = spot.numReviews || 0;
-
 	const isUserSpot = user && spot.Owner && user.id === spot.Owner.id;
 
-	console.log("Reviews:", reviews);
-	console.log("User ID:", user?.id);
 	const hasUserPostedReview = reviews.some(
 		(review) => review.userId === user?.id
 	);
