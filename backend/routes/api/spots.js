@@ -314,6 +314,12 @@ router.get("/:spotId", async (req, res, next) => {
 			return res.status(404).json({ message: "Spot couldn't be found" });
 		}
 
+		console.log("Spot Data (Before Formatting):", spot.dataValues);
+
+		const avgRating = spot.dataValues.avgRating
+			? parseFloat(spot.dataValues.avgRating).toFixed(1)
+			: null;
+
 		const formattedSpot = {
 			id: spot.id,
 			ownerId: spot.ownerId,
@@ -329,7 +335,7 @@ router.get("/:spotId", async (req, res, next) => {
 			createdAt: spot.createdAt,
 			updatedAt: spot.updatedAt,
 			numReviews: spot.dataValues.numReviews || 0,
-			avgStarRating: spot.dataValues.avgRating || null,
+			avgRating: spot.dataValues.avgRating || null,
 			SpotImages: spot.SpotImages,
 			previewImage: spot.SpotImages.find((img) => img.preview)?.url || null,
 			Owner: {
@@ -338,6 +344,8 @@ router.get("/:spotId", async (req, res, next) => {
 				lastName: spot.Owner.lastName,
 			},
 		};
+
+		console.log("Spot Data (Formatted):", formattedSpot);
 
 		res.status(200).json(formattedSpot);
 	} catch (err) {
