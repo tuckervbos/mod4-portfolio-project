@@ -29,7 +29,7 @@ const SpotDetails = () => {
 		spot.previewImage || spot.SpotImages?.[0]?.url || "/placeholder.jpg";
 	const secondaryImages = spot.SpotImages?.slice(1, 5) || [];
 	const avgRating =
-		typeof spot.avgRating === "number" && spot.avgRating >= 0
+		spot.avgRating && spot.avgRating >= 0 && !isNaN(parseFloat(spot.avgRating))
 			? `${spot.avgRating.toFixed(1)}`
 			: "New";
 	const reviewCount = spot.numReviews || 0;
@@ -46,7 +46,6 @@ const SpotDetails = () => {
 				onSubmit={(newReview) => {
 					dispatch(addReview(id, newReview));
 					dispatch(getSpotDetails(id));
-					// Add logic to update reviews and re-fetch details if necessary
 				}}
 			/>
 		);

@@ -87,8 +87,7 @@ export const deleteReview = (reviewId, spotId) => async (dispatch) => {
 		const { spot } = await response.json();
 		dispatch(removeReview(reviewId));
 		dispatch(updateSpotDetails(spotId, spot));
-	} else {
-		console.error("Failed to delete review:", await response.json());
+		dispatch(fetchSpotReviews(spotId));
 	}
 };
 

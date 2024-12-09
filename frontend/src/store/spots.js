@@ -164,7 +164,19 @@ const spotsReducer = (state = initialState, action) => {
 			return { ...state, [action.spot.id]: action.spot };
 		}
 		case UPDATE_SPOT: {
-			return { ...state, [action.spot.id]: action.spot };
+			const { spot } = action;
+			return {
+				...state,
+				allSpots: {
+					...state.allSpots,
+					[spot.id]: spot,
+				},
+				singleSpot: {
+					...(state.singleSpot || {}),
+					avgRating: parseFloat(spot.avgRating) || "New",
+					numReviews: spot.numReviews || 0,
+				},
+			};
 		}
 		case REMOVE_SPOT: {
 			return {
