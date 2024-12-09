@@ -19,7 +19,9 @@ const SpotDetails = () => {
 	const { setModalContent } = useModal();
 
 	useEffect(() => {
-		dispatch(getSpotDetails(id));
+		if (id) {
+			dispatch(getSpotDetails(id));
+		}
 	}, [dispatch, id, reviews.length]);
 
 	if (!spot || (!spot.previewImage && !spot.SpotImages))
