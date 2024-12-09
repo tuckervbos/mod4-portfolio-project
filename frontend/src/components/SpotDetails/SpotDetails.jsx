@@ -29,7 +29,7 @@ const SpotDetails = () => {
 		spot.previewImage || spot.SpotImages?.[0]?.url || "/placeholder.jpg";
 	const secondaryImages = spot.SpotImages?.slice(1, 5) || [];
 	const avgRating =
-		typeof spot.avgRating === "string" && spot.avgRating >= 0
+		typeof spot.avgRating === "number" && spot.avgRating >= 0
 			? `${spot.avgRating.toFixed(1)}`
 			: "New";
 	const reviewCount = spot.numReviews || 0;
