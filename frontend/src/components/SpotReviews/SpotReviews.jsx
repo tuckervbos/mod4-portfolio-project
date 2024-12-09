@@ -75,7 +75,7 @@ const SpotReviews = () => {
 								<div className="review-buttons">
 									<button
 										className="edit-review-button"
-										// onClick={() => console.log("Edit logic")}
+										// onClick={() => ("edit logic")}
 									>
 										Edit
 									</button>

@@ -44,7 +44,6 @@ export const fetchSpotReviews = (spotId) => async (dispatch) => {
 	const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
 	if (res.ok) {
 		const data = await res.json();
-		console.log("API Response for spot reviews:", data);
 		dispatch(loadReviews(data.Reviews));
 	}
 };
@@ -85,10 +84,9 @@ export const deleteReview = (reviewId, spotId) => async (dispatch) => {
 	});
 
 	if (response.ok) {
-		const { spot } = await response.json(); // Get updated spot data
-		console.log("Deleted review, updated spot:", spot); // Debug log
-		dispatch(removeReview(reviewId)); // Remove the review from Redux
-		dispatch(updateSpotDetails(spotId, spot)); // Update spot details dynamically
+		const { spot } = await response.json();
+		dispatch(removeReview(reviewId));
+		dispatch(updateSpotDetails(spotId, spot));
 	} else {
 		console.error("Failed to delete review:", await response.json());
 	}
@@ -100,7 +98,6 @@ const initialState = { spotReviews: {} };
 export default function reviewsReducer(state = initialState, action) {
 	switch (action.type) {
 		case LOAD_REVIEWS: {
-			console.log("Reducer LOAD_REVIEWS action payload:", action.reviews);
 			if (!action.reviews) {
 				console.error("No reviews found in action payload");
 				return state;

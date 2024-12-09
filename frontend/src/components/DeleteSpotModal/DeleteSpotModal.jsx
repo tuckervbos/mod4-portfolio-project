@@ -8,9 +8,7 @@ const DeleteSpotModal = ({ spotId }) => {
 	const { closeModal } = useModal();
 
 	const handleDelete = async () => {
-		console.log("Delete button clicked for spot:", spotId);
 		await dispatch(deleteSpot(spotId));
-		// if (onSuccess) onSuccess();
 		closeModal();
 	};
 

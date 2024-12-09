@@ -38,7 +38,7 @@ const SpotDetails = () => {
 	const hasUserPostedReview = reviews.some(
 		(review) => review.userId === user?.id
 	);
-	console.log("Has User Posted Review:", hasUserPostedReview);
+
 	const handlePostReviewClick = () => {
 		setModalContent(
 			<ReviewModal
