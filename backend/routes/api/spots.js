@@ -313,6 +313,8 @@ router.get("/:spotId", async (req, res, next) => {
 		if (!spot) {
 			return res.status(404).json({ message: "Spot couldn't be found" });
 		}
+
+		console.log("Raw spot dataValues:", spot.dataValues);
 		const formattedSpot = {
 			id: spot.id,
 			ownerId: spot.ownerId,
@@ -337,6 +339,7 @@ router.get("/:spotId", async (req, res, next) => {
 				lastName: spot.Owner.lastName,
 			},
 		};
+		console.log("Formatted spot data:", formattedSpot);
 
 		res.status(200).json(formattedSpot);
 	} catch (err) {
@@ -391,6 +394,10 @@ router.get("/", validateQueryParams, async (req, res, next) => {
 				},
 			],
 		});
+		console.log(
+			"Raw spot dataValues for all spots:",
+			spots.map((spot) => spot.dataValues)
+		);
 		const formattedSpots = spots.map((spot) => {
 			return {
 				id: spot.id,
@@ -413,6 +420,7 @@ router.get("/", validateQueryParams, async (req, res, next) => {
 					spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
 			};
 		});
+		console.log("Formatted spots data:", formattedSpots);
 
 		res.status(200).json({
 			Spots: formattedSpots,
