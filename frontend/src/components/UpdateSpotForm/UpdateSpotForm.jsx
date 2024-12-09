@@ -108,19 +108,6 @@ const UpdateSpotForm = () => {
 					/>
 					{errors.country && <p className="error">{errors.country}</p>}
 
-					<label htmlFor="country">
-						Country
-						{errors.country && <p className="error">{errors.country}</p>}
-					</label>
-
-					<input
-						id="country"
-						type="text"
-						placeholder="Country"
-						value={country}
-						onChange={(e) => setCountry(e.target.value)}
-					/>
-
 					<label htmlFor="address">
 						Street Address
 						{errors.address && <p className="error">{errors.address}</p>}
