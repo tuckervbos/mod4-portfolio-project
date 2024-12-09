@@ -335,7 +335,7 @@ router.get("/:spotId", async (req, res, next) => {
 			createdAt: spot.createdAt,
 			updatedAt: spot.updatedAt,
 			numReviews: spot.dataValues.numReviews || 0,
-			avgRating: spot.dataValues.avgRating || null,
+			avgRating,
 			SpotImages: spot.SpotImages,
 			previewImage: spot.SpotImages.find((img) => img.preview)?.url || null,
 			Owner: {
