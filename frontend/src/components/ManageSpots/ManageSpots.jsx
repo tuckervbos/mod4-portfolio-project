@@ -20,16 +20,11 @@ const ManageSpots = () => {
 	}, [dispatch, user]);
 
 	const handleDeleteClick = (spotId) => {
-		console.log("Opening delete modal for spot:", spotId);
-		setModalContent(
-			<DeleteSpotModal
-				spotId={spotId}
-				onSuccess={() => {
-					console.log("Spot deleted successfully:", spotId);
-					//post delete logic
-				}}
-			/>
-		);
+		setModalContent(<DeleteSpotModal spotId={spotId} />);
+	};
+
+	const handleCreateSpotClick = () => {
+		navigate("/spots/new");
 	};
 
 	if (!spots || spots.length === 0) {
@@ -46,7 +41,16 @@ const ManageSpots = () => {
 
 	return (
 		<div className="manage-spots">
-			<h1>Manage Spots</h1>
+			<div className="manage-spots-header">
+				<h1 className="manage-spots-h1">Manage Spots</h1>
+				<button
+					className="create-new-spot-button"
+					onClick={handleCreateSpotClick}
+				>
+					Create a New Spot
+				</button>
+			</div>
+
 			<div className="spots-list">
 				{spots.map((spot) => (
 					<div
@@ -60,13 +64,17 @@ const ManageSpots = () => {
 							className="spot-thumbnail"
 						/>
 						<div className="spot-info">
-							<p className="spot-location">
-								{spot.city}, {spot.state}
-							</p>
-							<p className="spot-rating">
+							<div className="spot-left">
+								<div className="spot-location">
+									{spot.city}, {spot.state}
+								</div>
+								<div className="spot-price">
+									${spot.price.toFixed(2)} / night
+								</div>
+							</div>
+							<div className="spot-rating">
 								⭐ {spot.avgRating ? spot.avgRating.toFixed(1) : "New"}
-							</p>
-							<p className="spot-price">${spot.price} / night</p>
+							</div>
 						</div>
 						<div className="spot-actions">
 							<button

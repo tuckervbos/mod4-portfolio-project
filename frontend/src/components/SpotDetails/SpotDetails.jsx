@@ -14,13 +14,13 @@ const SpotDetails = () => {
 	const spot = useSelector((state) => state.spots.singleSpot);
 	const user = useSelector((state) => state.session.user);
 	const reviews = useSelector((state) =>
-		spot?.id ? state.reviews[spot.id] || [] : []
+		Object.values(state.reviews.spotReviews || {})
 	);
 	const { setModalContent } = useModal();
 
 	useEffect(() => {
 		dispatch(getSpotDetails(id));
-	}, [dispatch, id]);
+	}, [dispatch, id, reviews.length]);
 
 	if (!spot || (!spot.previewImage && !spot.SpotImages))
 		return <p className="loading">Loading spot details...</p>;
@@ -33,10 +33,13 @@ const SpotDetails = () => {
 	const reviewCount = spot.numReviews || 0;
 
 	const isUserSpot = user && spot.Owner && user.id === spot.Owner.id;
+
+	console.log("Reviews:", reviews);
+	console.log("User ID:", user?.id);
 	const hasUserPostedReview = reviews.some(
 		(review) => review.userId === user?.id
 	);
-
+	console.log("Has User Posted Review:", hasUserPostedReview);
 	const handlePostReviewClick = () => {
 		setModalContent(
 			<ReviewModal

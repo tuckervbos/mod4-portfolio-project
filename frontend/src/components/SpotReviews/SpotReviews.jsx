@@ -3,17 +3,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import {
 	fetchSpotReviews,
-	deleteReview,
 	clearSpotReviews,
 	// updateReview,
 } from "../../store/reviews";
+import { useModal } from "../../context/Modal";
+import DeleteReviewModal from "../DeleteReviewModal/DeleteReviewModal";
 import "./SpotReviews.css";
 
 const SpotReviews = () => {
 	const { id: spotId } = useParams();
 	const dispatch = useDispatch();
-	const reviews = useSelector((state) =>
-		Object.values(state.reviews.spotReviews)
+	const { setModalContent } = useModal();
+
+	const reviews = useSelector(
+		(state) =>
+			Object.values(state.reviews.spotReviews).filter((review) => review.User) // Ensure only valid reviews
 	);
 	const sessionUser = useSelector((state) => state.session.user);
 	const spot = useSelector((state) => state.spots[spotId]);
@@ -38,9 +42,9 @@ const SpotReviews = () => {
 	// 	setEditingReviewId(review.id);
 	// };
 
-	// const handleDelete = (reviewId) => {
-	// 	dispatch(deleteReview(reviewId));
-	// };
+	const handleDeleteReviewClick = (reviewId) => {
+		setModalContent(<DeleteReviewModal reviewId={reviewId} />);
+	};
 
 	return (
 		<div className="spot-reviews">
@@ -71,13 +75,13 @@ const SpotReviews = () => {
 								<div className="review-buttons">
 									<button
 										className="edit-review-button"
-										onClick={() => console.log("Edit logic")}
+										// onClick={() => console.log("Edit logic")}
 									>
 										Edit
 									</button>
 									<button
 										className="delete-review-button"
-										onClick={() => dispatch(deleteReview(review.id))}
+										onClick={() => handleDeleteReviewClick(review.id)}
 									>
 										Delete
 									</button>

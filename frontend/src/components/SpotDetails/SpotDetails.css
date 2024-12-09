@@ -157,11 +157,6 @@
 	text-align: center;
 }
 
-/* .rating {
-	font-size: 1rem;
-	margin-bottom: 10px;
-	
-	display: flex;
-	align-items: center;
-	gap: 5px;
-} */
+.post-review-button {
+	width: 180px;
+}

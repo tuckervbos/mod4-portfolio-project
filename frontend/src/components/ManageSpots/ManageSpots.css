@@ -1,58 +1,84 @@
 .manage-spots {
 	max-width: 1200px;
 	margin: 0 auto;
-	padding: 20px;
+	padding: 25px;
 }
 
 .manage-spots-h1 {
 	font-size: 2.5rem;
-	margin-bottom: 20px;
+	margin-bottom: 15px;
+	text-align: left;
+	padding-left: 11px;
 }
 
-.spots-list {
+.manage-spots .spots-list {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-	gap: 20px;
+	grid-template-columns: repeat(4, 1fr);
+	padding: 10px;
+	justify-content: start;
+	align-items: stretch;
 }
 
-.spot-tile {
+.manage-spots .spot-tile {
+	display: flex;
+	flex-direction: column;
+	text-decoration: none;
 	border: 1px solid #ddd;
 	border-radius: 8px;
 	overflow: hidden;
 	cursor: pointer;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	position: relative;
+	width: 220px;
+	height: auto;
+	justify-content: space-between;
+	margin: 0;
 }
 
-.spot-tile:hover {
+.manage-spots .spot-tile:hover {
 	transform: scale(1.02);
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.spot-thumbnail {
+.manage-spots .spot-thumbnail {
 	width: 100%;
 	height: 200px;
 	object-fit: cover;
+	border-radius: 8px 8px 0 0;
 }
 
-.spot-info {
-	padding: 10px;
+.manage-spots .spot-info {
+	padding: 8px;
+	font-size: 14px;
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 10px;
 }
 
-.spot-location,
-.spot-rating,
-.spot-price {
+.manage-spots .spot-left {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.manage-spots .spot-location,
+.manage-spots .spot-rating,
+.manage-spots .spot-price {
 	margin: 5px 0;
 }
 
-.spot-actions {
+.manage-spots .spot-actions {
 	display: flex;
 	justify-content: space-between;
 	padding: 10px;
+	gap: 10px;
+	align-items: stretch;
 }
 
-.update-button,
-.delete-button {
+.manage-spots .update-button,
+.manage-spots .delete-button {
 	background-color: #f97300;
 	color: white;
 	border: none;
@@ -62,28 +88,45 @@
 	transition: background-color 0.2s ease;
 }
 
-.update-button:hover {
+.manage-spots .update-button:hover,
+.manage-spots .delete-button:hover {
 	background-color: #dc6904;
 }
 
-.delete-button {
-	background-color: #f97300;
-}
-
-.delete-button:hover {
-	background-color: #dc6904;
-}
-
-.create-new-spot-link {
+.manage-spots .create-new-spot-link {
 	display: inline-block;
 	margin-top: 20px;
 	padding: 10px 20px;
-	background-color: #007b5f;
+	background-color: #f97300;
 	color: white;
 	text-decoration: none;
 	border-radius: 5px;
 }
 
-.create-new-spot-link:hover {
-	background-color: #005f47;
+.manage-spots .create-new-spot-link:hover {
+	background-color: #dc6904;
+}
+
+.manage-spots .create-new-spot-button {
+	display: inline-block;
+	margin: 10px 10px;
+	padding: 10px;
+	background-color: #f97300;
+	color: white;
+	font-size: 14px;
+	text-align: center;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	max-width: 160px;
+}
+
+.manage-spots .create-new-spot-button:hover {
+	background-color: #dc6904;
+}
+
+.manage-spots .create-new-spot-button:active {
+	background-color: #bb5903;
+	transform: scale(0.98);
 }

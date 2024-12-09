@@ -101,7 +101,7 @@ nav a {
 }
 
 .profile-dropdown a:visited {
-	color: #f97300; /* Same color as unvisited links */
+	color: #f97300;
 }
 
 .profile-dropdown Link:hover {

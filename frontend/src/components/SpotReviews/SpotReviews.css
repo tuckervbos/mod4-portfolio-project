@@ -2,29 +2,29 @@
 	margin-top: 20px;
 }
 
-.review {
+.spot-reviews .review {
 	border-bottom: 1px solid #ccc;
 	padding: 10px 0;
 }
 
-form {
+.spot-reviews form {
 	margin-top: 20px;
 }
 
-textarea,
+.spot-reviews textarea,
 input {
 	width: 100%;
 	margin-bottom: 10px;
 	padding: 10px;
 }
 
-.review-buttons {
+.spot-reviews .review-buttons {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
 }
 
-.edit-review-button,
+.spot-reviews .edit-review-button,
 .delete-review-button {
 	padding: 10px 20px;
 	background-color: #f97300;
@@ -35,7 +35,7 @@ input {
 	max-width: 150px;
 }
 
-.post-review-button {
+.spot-reviews .post-review-button {
 	margin-bottom: 20px;
 	background-color: #f97300;
 	color: white;

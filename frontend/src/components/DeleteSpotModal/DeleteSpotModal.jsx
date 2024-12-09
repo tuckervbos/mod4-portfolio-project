@@ -3,14 +3,14 @@ import { useModal } from "../../context/Modal";
 import { deleteSpot } from "../../store/spots";
 import "./DeleteSpotModal.css";
 
-const DeleteSpotModal = ({ spotId, onSuccess }) => {
+const DeleteSpotModal = ({ spotId }) => {
 	const dispatch = useDispatch();
 	const { closeModal } = useModal();
 
 	const handleDelete = async () => {
 		console.log("Delete button clicked for spot:", spotId);
 		await dispatch(deleteSpot(spotId));
-		if (onSuccess) onSuccess();
+		// if (onSuccess) onSuccess();
 		closeModal();
 	};
 

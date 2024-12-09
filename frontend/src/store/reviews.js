@@ -7,6 +7,7 @@ const ADD_REVIEW = "reviews/ADD_REVIEW";
 const REMOVE_REVIEW = "reviews/REMOVE_REVIEW";
 const UPDATE_REVIEW = "reviews/UPDATE_REVIEW";
 const CLEAR_SPOT_REVIEWS = "reviews/CLEAR_SPOT_REVIEWS";
+const UPDATE_SPOT_DETAILS = "reviews/UPDATE_SPOT_DETAILS";
 
 //> action creators
 const loadReviews = (reviews) => ({
@@ -33,12 +34,17 @@ export const clearSpotReviews = () => ({
 	type: CLEAR_SPOT_REVIEWS,
 });
 
+const updateSpotDetails = (spotId, spotData) => ({
+	type: UPDATE_SPOT_DETAILS,
+	payload: { spotId, ...spotData },
+});
+
 //- thunks
 export const fetchSpotReviews = (spotId) => async (dispatch) => {
 	const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
 	if (res.ok) {
 		const data = await res.json();
-		console.log("API Response for spot reviews:", data); // Add this
+		console.log("API Response for spot reviews:", data);
 		dispatch(loadReviews(data.Reviews));
 	}
 };
@@ -52,8 +58,10 @@ export const addReview = (spotId, review) => async (dispatch) => {
 		body: JSON.stringify(reviewPayload),
 	});
 	if (res.ok) {
-		const newReview = await res.json();
+		const { newReview, spot } = await res.json();
 		dispatch(addReviewAction(newReview));
+		dispatch(updateSpotDetails(spotId, spot));
+		dispatch(fetchSpotReviews(spotId));
 	}
 };
 
@@ -71,10 +79,18 @@ export const updateReview = (reviewId, reviewData) => async (dispatch) => {
 	}
 };
 
-export const deleteReview = (reviewId) => async (dispatch) => {
-	const res = await csrfFetch(`/api/reviews/${reviewId}`, { method: "DELETE" });
-	if (res.ok) {
-		dispatch(removeReview(reviewId));
+export const deleteReview = (reviewId, spotId) => async (dispatch) => {
+	const response = await csrfFetch(`/api/reviews/${reviewId}`, {
+		method: "DELETE",
+	});
+
+	if (response.ok) {
+		const { spot } = await response.json(); // Get updated spot data
+		console.log("Deleted review, updated spot:", spot); // Debug log
+		dispatch(removeReview(reviewId)); // Remove the review from Redux
+		dispatch(updateSpotDetails(spotId, spot)); // Update spot details dynamically
+	} else {
+		console.error("Failed to delete review:", await response.json());
 	}
 };
 
@@ -107,7 +123,11 @@ export default function reviewsReducer(state = initialState, action) {
 			};
 		case REMOVE_REVIEW: {
 			const newState = { ...state, spotReviews: { ...state.spotReviews } };
-			delete newState.spotReviews[action.reviewId];
+			if (action.reviewId in newState.spotReviews) {
+				delete newState.spotReviews[action.reviewId];
+			} else {
+				console.warn(`Review ID ${action.reviewId} not found in spotReviews`);
+			}
 			return newState;
 		}
 		case UPDATE_REVIEW:
@@ -120,6 +140,27 @@ export default function reviewsReducer(state = initialState, action) {
 			};
 		case CLEAR_SPOT_REVIEWS:
 			return { ...state, spotReviews: {} };
+		case UPDATE_SPOT_DETAILS: {
+			const { spotId, numReviews, avgRating } = action.payload;
+
+			return {
+				...state,
+				allSpots: {
+					...state.allSpots,
+					[spotId]: {
+						...(state.allSpots?.[spotId] || {}),
+						numReviews,
+						avgRating,
+					},
+				},
+				singleSpot: {
+					...(state.singleSpot || {}),
+					numReviews,
+					avgRating,
+				},
+			};
+		}
+
 		default:
 			return state;
 	}
