@@ -9,7 +9,7 @@ import ReviewModal from "../ReviewModal/ReviewModal";
 import { addReview } from "../../store/reviews";
 
 const SpotDetails = () => {
-	const { id } = useParams();
+	const { spotId } = useParams();
 	const dispatch = useDispatch();
 	const spot = useSelector((state) => state.spots.singleSpot);
 	const user = useSelector((state) => state.session.user);
@@ -19,8 +19,8 @@ const SpotDetails = () => {
 	const { setModalContent } = useModal();
 
 	useEffect(() => {
-		dispatch(getSpotDetails(id));
-	}, [dispatch, id, reviews.length]);
+		dispatch(getSpotDetails(spotId));
+	}, [dispatch, spotId, reviews.length]);
 
 	if (!spot || (!spot.previewImage && !spot.SpotImages))
 		return <p className="loading">Loading spot details...</p>;
@@ -32,19 +32,19 @@ const SpotDetails = () => {
 		? `${parseFloat(spot.avgRating).toFixed(1)}`
 		: "New";
 	const reviewCount = spot.numReviews || 0;
-	const isUserSpot = user && spot.Owner && user.id === spot.Owner.id;
+	const isUserSpot = user && spot.Owner && user.spotId === spot.Owner.spotId;
 
 	const hasUserPostedReview = reviews.some(
-		(review) => review.userId === user?.id
+		(review) => review.userId === user?.spotId
 	);
 
 	const handlePostReviewClick = () => {
 		setModalContent(
 			<ReviewModal
-				spotId={id}
+				spotId={spotId}
 				onSubmit={(newReview) => {
-					dispatch(addReview(id, newReview));
-					dispatch(getSpotDetails(id));
+					dispatch(addReview(spotId, newReview));
+					dispatch(getSpotDetails(spotId));
 				}}
 			/>
 		);
@@ -139,7 +139,7 @@ const SpotDetails = () => {
 						<p className="no-reviews">No reviews yet.</p>
 					)
 				) : (
-					<SpotReviews spotId={id} />
+					<SpotReviews spotId={spotId} />
 				)}
 			</div>
 		</div>
