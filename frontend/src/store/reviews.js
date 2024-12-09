@@ -84,9 +84,9 @@ export const deleteReview = (reviewId, spotId) => async (dispatch) => {
 	});
 
 	if (response.ok) {
-		const { spot } = await response.json();
+		// const { spot } = await response.json();
 		dispatch(removeReview(reviewId));
-		dispatch(updateSpotDetails(spotId, spot));
+		// dispatch(updateSpotDetails(spotId, spot));
 		dispatch(fetchSpotReviews(spotId));
 	}
 };
