@@ -69,7 +69,7 @@ const SpotDetails = () => {
 				<div className="secondary-images">
 					{secondaryImages.map((image) => (
 						<img
-							key={image.id}
+							key={image.spotId}
 							src={image.url}
 							alt={`${spot.name} image`}
 							className="spot-image"
