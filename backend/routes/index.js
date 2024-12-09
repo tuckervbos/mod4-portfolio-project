@@ -38,11 +38,4 @@ if (process.env.NODE_ENV !== "production") {
 	});
 }
 
-// Keep this route to test frontend setup in Mod 5
-// Test Route
-// router.post("/test", (req, res) => {
-// 	console.log("Request Body:", req.body);
-// 	res.json({ requestBody: req.body });
-// });
-
 module.exports = router;

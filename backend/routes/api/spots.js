@@ -406,7 +406,9 @@ router.get("/", validateQueryParams, async (req, res, next) => {
 				price: spot.price,
 				createdAt: spot.createdAt,
 				updatedAt: spot.updatedAt,
-				avgRating: spot.dataValues.avgRating || null,
+				avgRating: spot.dataValues.avgRating
+					? parseFloat(spot.dataValues.avgRating)
+					: 0,
 				previewImage:
 					spot.SpotImages.length > 0 ? spot.SpotImages[0].url : null,
 			};
